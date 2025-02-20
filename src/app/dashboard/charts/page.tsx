@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from "recharts";
 import Header from "@/components/header";
 import { useRouter } from "next/navigation";
+import BalanceInfo from "@/components/balanceInfo";
 
 interface Transaction {
     id: string;
@@ -55,10 +56,6 @@ export default function GraphsPage() {
         link.click();
     };
 
-    const totalIncome = transactions.filter(t => t.type === "income").reduce((acc, t) => acc + t.amount, 0);
-    const totalExpense = transactions.filter(t => t.type === "expense").reduce((acc, t) => acc + t.amount, 0);
-    const currentBalance = totalIncome - totalExpense;
-
     const categories = Array.from(new Set(transactions.map(t => t.category)));
     const categoryData = categories.map(category => ({
         name: category,
@@ -95,32 +92,7 @@ export default function GraphsPage() {
     <h1 className="text-3xl font-bold text-gray-900 mb-6 dark:text-white">Gráficos Financeiros</h1>
 
     {/* Cards de Resumo */}
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
-            <h3 className="text-gray-600 dark:text-gray-300">Saldo Atual</h3>
-            <p className="text-2xl font-bold text-gray-600 dark:text-white">
-                {currentBalance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-            </p>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
-            <h3 className="text-gray-600 dark:text-gray-300">Receitas</h3>
-            <p className="text-2xl font-bold text-green-500">
-                {totalIncome.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-            </p>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
-            <h3 className="text-gray-600 dark:text-gray-300">Despesas</h3>
-            <p className="text-2xl font-bold text-red-500">
-                {totalExpense.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-            </p>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
-            <h3 className="text-gray-600 dark:text-gray-300">Saldo Médio</h3>
-            <p className="text-2xl font-bold text-gray-600 dark:text-white">
-                {(currentBalance / 12).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-            </p>
-        </div>
-    </div>
+   <BalanceInfo/>
 
     {/* Gráficos */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
