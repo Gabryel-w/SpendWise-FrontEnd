@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import Header from "@/components/header";
 import BalanceInfo from "@/components/balanceInfo";
+import Chatbot from "@/components/chatBot";
 
 interface Transaction {
     id: string;
@@ -111,12 +112,6 @@ export default function DashboardPage() {
                         : t
                 );
 
-                // Recalcular saldo total
-                const newBalance = updatedTransactions.reduce((acc, transaction) => {
-                    return transaction.type === "income" ? acc + transaction.amount : acc - transaction.amount;
-                }, 0);
-
-                setBalance(newBalance);
                 return updatedTransactions;
             });
 
@@ -174,73 +169,58 @@ export default function DashboardPage() {
         <>
             <Header />
             <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900">
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex gap-4">
-                        <Link href="/dashboard/charts">
-                            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700">
-                                Gráficos Financeiros
-                            </button>
-                        </Link>
-
-                        <Link href="/dashboard/new-transaction">
-                            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700">
-                                Adicionar Nova Transação
-                            </button>
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Campo de pesquisa */}
-
-
-                {/* Cards e Tabela */}
                 <div className="grid grid-cols-1">
                     {/* Card de Saldo Total */}
                     <BalanceInfo />
-
-
-
-                    {/* Tabela de Últimas Transações */}
                     <motion.div className="bg-white p-4 rounded-xl shadow-md col-span-2 dark:bg-gray-800">
+                        {/* Botão "Adicionar Nova Transação" e Filtros */}
+                        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                            {/* Botão "Adicionar Nova Transação" */}
+                            <div className="w-full sm:w-auto">
+                                <Link href="/dashboard/new-transaction">
+                                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700 w-full sm:w-auto">
+                                        Adicionar Nova Transação
+                                    </button>
+                                </Link>
+                            </div>
 
-
-
-                        {/* Filtros */}
-                        <div className="flex justify-center sm:justify-end">
-
-                            <input
-                                type="text"
-                                placeholder="Pesquisar transações..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="p-2 mb-4 mr-4 w-80 border border-gray-300 rounded-lg text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                            />
-
-                            <div className="flex gap-4 mb-4 flex-col sm:flex-row">
-                                <select
-                                    className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                                    onChange={(e) => setFilterType(e.target.value)}
-                                >
-                                    <option value="">Todos</option>
-                                    <option value="income">Receitas</option>
-                                    <option value="expense">Despesas</option>
-                                </select>
+                            {/* Filtros e Barra de Pesquisa */}
+                            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                                 <input
                                     type="text"
-                                    placeholder="Filtrar por categoria"
-                                    value={filterCategory}
-                                    onChange={(e) => setFilterCategory(e.target.value)}
-                                    className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                    placeholder="Pesquisar transações..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="p-2 border border-gray-300 rounded-lg text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white w-full sm:w-80"
                                 />
-                                <input
-                                    type="date"
-                                    value={filterDate}
-                                    onChange={(e) => setFilterDate(e.target.value)}
-                                    className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-                                />
+
+                                <div className="flex gap-4 w-full sm:w-auto">
+                                    <select
+                                        className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white w-full sm:w-auto"
+                                        onChange={(e) => setFilterType(e.target.value)}
+                                    >
+                                        <option value="">Todos</option>
+                                        <option value="income">Receitas</option>
+                                        <option value="expense">Despesas</option>
+                                    </select>
+                                    <input
+                                        type="text"
+                                        placeholder="Filtrar por categoria"
+                                        value={filterCategory}
+                                        onChange={(e) => setFilterCategory(e.target.value)}
+                                        className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white w-full sm:w-auto"
+                                    />
+                                    <input
+                                        type="date"
+                                        value={filterDate}
+                                        onChange={(e) => setFilterDate(e.target.value)}
+                                        className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white w-full sm:w-auto"
+                                    />
+                                </div>
                             </div>
                         </div>
 
+                        {/* Tabela de Transações */}
                         <div className="mt-3 space-y-2 h-96 overflow-y-auto">
                             <table className="w-full">
                                 <thead>
@@ -352,6 +332,7 @@ export default function DashboardPage() {
                     </div>
                 )}
             </div>
+            <Chatbot />
         </>
     );
 }

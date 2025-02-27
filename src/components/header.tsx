@@ -22,11 +22,18 @@ export default function Header() {
     };
 
     return (
-        <header className="bg-gray-900 text-white py-4 px-6 flex justify-between items-center shadow-md relative">
-            {/* Logo */}
-            <h1 className="text-xl font-bold">
-                <Link href="/dashboard">SpendWise</Link>
-            </h1>
+        <header className="bg-[#141315] text-white py-4 px-6 flex justify-between items-center shadow-md relative">
+            {/* Logo e Link para Gráficos financeiros */}
+            <div className="flex items-center gap-6">
+                <h1 className="text-xl font-bold">
+                    <Link href="/dashboard">SpendWise</Link>
+                </h1>
+
+                {/* Link para Gráficos financeiros (visível em telas maiores) */}
+                <p className="hidden md:block text-sm font-semibold hover:text-blue-300 transition-colors duration-200">
+                    <Link href="/dashboard/charts">Gráficos financeiros</Link>
+                </p>
+            </div>
 
             {/* Menu para telas maiores */}
             <nav className="hidden md:flex items-center gap-6">
@@ -77,6 +84,11 @@ export default function Header() {
                 className={`md:hidden absolute top-full left-0 w-full bg-gray-800 text-white transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? "max-h-96" : "max-h-0"}`}
             >
                 <div className="p-4 flex flex-col gap-4">
+                    {/* Link para Gráficos financeiros no menu móvel */}
+                    <p className="text-sm font-semibold hover:text-blue-300 transition-colors duration-200">
+                        <Link href="/dashboard/charts">Gráficos financeiros</Link>
+                    </p>
+
                     {user ? (
                         <>
                             <span className="text-sm">{user.email}</span>

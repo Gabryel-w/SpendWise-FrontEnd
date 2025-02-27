@@ -89,77 +89,77 @@ export default function GraphsPage() {
 
 
             <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900 dark:text-white">
-    <h1 className="text-3xl font-bold text-gray-900 mb-6 dark:text-white">Gráficos Financeiros</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-6 dark:text-white">Gráficos Financeiros</h1>
 
-    {/* Cards de Resumo */}
-   <BalanceInfo/>
+                {/* Cards de Resumo */}
+                <BalanceInfo />
 
-    {/* Gráficos */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Gráfico de Distribuição de Gastos */}
-        <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
-            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Distribuição de Gastos</h2>
-            <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                    <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}>
-                        {categoryData.map((_, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                    </Pie>
-                    <Tooltip />
-                </PieChart>
-            </ResponsiveContainer>
-        </div>
+                {/* Gráficos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Gráfico de Distribuição de Gastos */}
+                    <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Distribuição de Gastos</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <PieChart>
+                                <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100}>
+                                    {categoryData.map((_, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
 
-        {/* Gráfico de Receitas vs Despesas */}
-        <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
-            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Receitas vs Despesas</h2>
-            <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={incomeExpensesData}>
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="income" fill="#4CAF50" />
-                    <Bar dataKey="expense" fill="#F44336" />
-                </BarChart>
-            </ResponsiveContainer>
-        </div>
-    </div>
+                    {/* Gráfico de Receitas vs Despesas */}
+                    <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Receitas vs Despesas</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={incomeExpensesData}>
+                                <XAxis dataKey="date" />
+                                <YAxis />
+                                <Tooltip />
+                                <Bar dataKey="income" fill="#4CAF50" />
+                                <Bar dataKey="expense" fill="#F44336" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
 
-    {/* Gráficos Adicionais */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {/* Gráfico de Evolução do Saldo */}
-        <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
-            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Evolução do Saldo</h2>
-            <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={balanceData}>
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="balance" stroke="#2196F3" />
-                </LineChart>
-            </ResponsiveContainer>
-        </div>
+                {/* Gráficos Adicionais */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    {/* Gráfico de Evolução do Saldo */}
+                    <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Evolução do Saldo</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={balanceData}>
+                                <XAxis dataKey="date" />
+                                <YAxis />
+                                <Tooltip />
+                                <Line type="monotone" dataKey="balance" stroke="#2196F3" />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
 
-        {/* Gráfico de Gastos Acumulados */}
-        <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
-            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Gastos Acumulados</h2>
-            <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={incomeExpensesData}>
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="expense" stroke="#FF9800" fill="#FF9800" />
-                </AreaChart>
-            </ResponsiveContainer>
-        </div>
-    </div>
+                    {/* Gráfico de Gastos Acumulados */}
+                    <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Gastos Acumulados</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <AreaChart data={incomeExpensesData}>
+                                <XAxis dataKey="date" />
+                                <YAxis />
+                                <Tooltip />
+                                <Area type="monotone" dataKey="expense" stroke="#FF9800" fill="#FF9800" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
 
-    {/* Botão de Exportação */}
-    <button onClick={exportToCSV} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-6 dark:bg-blue-600">
-        Exportar para CSV
-    </button>
-</div>
+                {/* Botão de Exportação */}
+                <button onClick={exportToCSV} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-6 dark:bg-blue-600">
+                    Exportar para CSV
+                </button>
+            </div>
         </>
     );
 }
