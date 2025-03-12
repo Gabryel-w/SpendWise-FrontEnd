@@ -64,7 +64,7 @@ export default function NewTransaction() {
 
             <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
                 <div className="max-w-md w-full bg-white p-6 rounded-lg shadow-md">
-                    <h1 className="text-2xl font-bold text-center mb-4">Nova Transação</h1>
+                    <h1 className="text-2xl font-bold text-center mb-4 text-gray-800">Nova Transação</h1>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
@@ -73,7 +73,7 @@ export default function NewTransaction() {
                                 type="text"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                className="w-full p-2 border rounded mt-1"
+                                className="w-full p-2 border rounded mt-1 text-gray-800"
                                 required
                             />
                         </div>
@@ -83,7 +83,7 @@ export default function NewTransaction() {
                             <select
                                 value={type}
                                 onChange={(e) => setType(e.target.value)}
-                                className="w-full p-2 border rounded mt-1"
+                                className="w-full p-2 border rounded mt-1 text-gray-800"
                                 required
                             >
                                 <option value="income">Receita</option>
@@ -98,7 +98,7 @@ export default function NewTransaction() {
                                 step="0.01"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
-                                className="w-full p-2 border rounded mt-1"
+                                className="w-full p-2 border rounded mt-1 text-gray-800"
                                 required
                             />
                         </div>
@@ -109,7 +109,7 @@ export default function NewTransaction() {
                                 type="text"
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
-                                className="w-full p-2 border rounded mt-1"
+                                className="w-full p-2 border rounded mt-1 text-gray-800"
                                 required
                             />
                         </div>
@@ -120,7 +120,7 @@ export default function NewTransaction() {
                                 type="date"
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
-                                className="w-full p-2 border rounded mt-1"
+                                className="w-full p-2 border rounded mt-1 text-gray-800"
                                 required
                             />
                         </div>

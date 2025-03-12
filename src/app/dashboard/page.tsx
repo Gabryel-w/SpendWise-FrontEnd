@@ -290,19 +290,19 @@ export default function DashboardPage() {
                                 placeholder="Descrição"
                                 value={editForm.description}
                                 onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800"
                             />
                             <input
                                 type="number"
                                 placeholder="Valor"
                                 value={editForm.amount}
                                 onChange={(e) => setEditForm({ ...editForm, amount: Number(e.target.value) })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800"
                             />
                             <select
                                 value={editForm.type}
                                 onChange={(e) => setEditForm({ ...editForm, type: e.target.value as "income" | "expense" })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800" 
                             >
                                 <option value="income">Receita</option>
                                 <option value="expense">Despesa</option>
@@ -312,13 +312,13 @@ export default function DashboardPage() {
                                 placeholder="Categoria"
                                 value={editForm.category}
                                 onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800"
                             />
                             <input
                                 type="date"
                                 value={editForm.date}
                                 onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800"
                             />
                             <div className="flex justify-end gap-2">
                                 <button onClick={() => setEditingTransaction(null)} className="bg-gray-400 text-white px-4 py-2 rounded dark:bg-gray-600">

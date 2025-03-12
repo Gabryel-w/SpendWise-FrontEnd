@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 
 interface Message {
@@ -11,10 +11,18 @@ export default function Chatbot() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
+    const [user, setUser] = useState<{ id: string } | null>(null); // Estado para armazenar o usuário
+
+    useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        if (userData && userData.id) {
+            setUser(userData); // Atualiza o estado com os dados do usuário
+        }
+    }, []); // Executa apenas uma vez ao montar o componente
 
     const sendMessage = async (message?: string) => {
         const messageToSend = message || input.trim();
-        if (!messageToSend) return;
+        if (!messageToSend || !user?.id) return; // Verifica se o user.id existe
 
         const newMessages: Message[] = [...messages, { sender: "user", text: messageToSend }];
         setMessages(newMessages);
@@ -24,7 +32,7 @@ export default function Chatbot() {
             const response = await fetch("http://localhost:5000/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: messageToSend })
+                body: JSON.stringify({ message: messageToSend, user_id: user.id }) // Passa o user_id corretamente
             });
 
             const data = await response.json();
@@ -68,7 +76,7 @@ export default function Chatbot() {
                     )}
                     <div className="flex">
                         <input
-                            className="flex-1 border p-2 rounded-l-md dark:bg-gray-700 dark:text-white"
+                            className="flex-1 border p-2 rounded-l-md dark:bg-gray-700 dark:text-white text-gray-800"
                             type="text"
                             placeholder="Digite sua pergunta..."
                             value={input}
