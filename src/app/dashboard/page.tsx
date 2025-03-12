@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FiEdit, FiTrash } from "react-icons/fi";
 import Header from "@/components/header";
 import BalanceInfo from "@/components/balanceInfo";
 import Chatbot from "@/components/chatBot";
+import TransactionTable from "@/components/TransactionTable";
+import Pagination from "@/components/Pagination";
+import EditTransactionModal from "@/components/EditTransactionModal";
+import Filters from "@/components/Filters";
 
 interface Transaction {
     id: string;
@@ -28,8 +31,8 @@ export default function DashboardPage() {
     const [filterType, setFilterType] = useState("");
     const [filterCategory, setFilterCategory] = useState("");
     const [filterDate, setFilterDate] = useState("");
-    const [currentPage, setCurrentPage] = useState(1); // Estado para a página atual
-    const [itemsPerPage] = useState(10); // Itens por página
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(10);
 
     const router = useRouter();
 
@@ -58,13 +61,12 @@ export default function DashboardPage() {
         fetchTransactions();
     }, []);
 
-    // Atualizar lista filtrada conforme o usuário digita na barra de pesquisa
     useEffect(() => {
         const filtered = transactions.filter((transaction) =>
             transaction.description.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredTransactions(filtered);
-        setCurrentPage(1); // Resetar para a primeira página ao filtrar
+        setCurrentPage(1);
     }, [searchTerm, transactions]);
 
     const handleEdit = (transaction: Transaction) => {
@@ -90,7 +92,7 @@ export default function DashboardPage() {
         }
 
         setFilteredTransactions(filtered);
-        setCurrentPage(1); // Resetar para a primeira página ao filtrar
+        setCurrentPage(1);
     }, [searchTerm, filterType, filterCategory, filterDate, transactions]);
 
     const handleUpdate = async () => {
@@ -129,10 +131,8 @@ export default function DashboardPage() {
                 throw new Error("Erro ao deletar transação.");
             }
 
-            // Atualiza a lista removendo a transação deletada
             setTransactions((prev) => prev.filter((transaction) => transaction.id !== id));
 
-            // Recalcula o saldo
             setBalance((prev) => {
                 const deletedTransaction = transactions.find((t) => t.id === id);
                 if (!deletedTransaction) return prev;
@@ -170,12 +170,9 @@ export default function DashboardPage() {
             <Header />
             <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900">
                 <div className="grid grid-cols-1">
-                    {/* Card de Saldo Total */}
                     <BalanceInfo />
                     <motion.div className="bg-white p-4 rounded-xl shadow-md col-span-2 dark:bg-gray-800">
-                        {/* Botão "Adicionar Nova Transação" e Filtros */}
                         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-                            {/* Botão "Adicionar Nova Transação" */}
                             <div className="w-full sm:w-auto">
                                 <Link href="/dashboard/new-transaction">
                                     <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700 w-full sm:w-auto">
@@ -184,152 +181,40 @@ export default function DashboardPage() {
                                 </Link>
                             </div>
 
-                            {/* Filtros e Barra de Pesquisa */}
-                            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                                <input
-                                    type="text"
-                                    placeholder="Pesquisar transações..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="p-2 border border-gray-300 rounded-lg text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white w-full sm:w-80"
-                                />
-
-                                <div className="flex gap-4 w-full sm:w-auto">
-                                    <select
-                                        className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white w-full sm:w-auto"
-                                        onChange={(e) => setFilterType(e.target.value)}
-                                    >
-                                        <option value="">Todos</option>
-                                        <option value="income">Receitas</option>
-                                        <option value="expense">Despesas</option>
-                                    </select>
-                                    <input
-                                        type="text"
-                                        placeholder="Filtrar por categoria"
-                                        value={filterCategory}
-                                        onChange={(e) => setFilterCategory(e.target.value)}
-                                        className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white w-full sm:w-auto"
-                                    />
-                                    <input
-                                        type="date"
-                                        value={filterDate}
-                                        onChange={(e) => setFilterDate(e.target.value)}
-                                        className="p-2 border rounded text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white w-full sm:w-auto"
-                                    />
-                                </div>
-                            </div>
+                            <Filters
+                                searchTerm={searchTerm}
+                                setSearchTerm={setSearchTerm}
+                                filterType={filterType}
+                                setFilterType={setFilterType}
+                                filterCategory={filterCategory}
+                                setFilterCategory={setFilterCategory}
+                                filterDate={filterDate}
+                                setFilterDate={setFilterDate}
+                            />
                         </div>
 
-                        {/* Tabela de Transações */}
-                        <div className="mt-3 space-y-2 h-96 overflow-y-auto">
-                            <table className="w-full">
-                                <thead>
-                                    <tr className="border-b dark:border-gray-700">
-                                        <th className="text-left py-2 text-gray-700 dark:text-white">Descrição</th>
-                                        <th className="text-left py-2 text-gray-700 dark:text-white">Data</th>
-                                        <th className="text-left py-2 text-gray-700 dark:text-white">Categoria</th>
-                                        <th className="text-left py-2 text-gray-700 dark:text-white">Valor</th>
-                                        <th className="text-left py-2 text-gray-700 dark:text-white">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {currentTransactions.map((transaction) => (
-                                        <tr key={transaction.id} className="border-b text-gray-500 dark:border-gray-700">
-                                            <td className="py-2 dark:text-white">{transaction.description}</td>
-                                            <td className="py-2 dark:text-white">{transaction.date}</td>
-                                            <td className="py-2 dark:text-white">{transaction.category}</td>
-                                            <td className={`py-2 font-bold ${transaction.type === "income" ? "text-green-600" : "text-red-600"}`}>
-                                                {transaction.type === "income" ? "+" : "-"} R$ {transaction.amount.toFixed(2)}
-                                            </td>
-                                            <td className="py-2">
-                                                <div className="flex items-center gap-2">
-                                                    <button className="text-red-500 hover:text-red-700 transition" onClick={() => handleDelete(transaction.id)}>
-                                                        <FiTrash size={18} />
-                                                    </button>
-                                                    <button onClick={() => handleEdit(transaction)} className="text-blue-500">
-                                                        <FiEdit />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <TransactionTable
+                            transactions={currentTransactions}
+                            handleEdit={handleEdit}
+                            handleDelete={handleDelete}
+                        />
 
-                        {/* Paginação */}
-                        <div className="flex justify-between mt-4">
-                            <button
-                                onClick={handlePreviousPage}
-                                disabled={currentPage === 1}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400 dark:bg-blue-600 dark:hover:bg-blue-700"
-                            >
-                                Anterior
-                            </button>
-                            <span className="text-gray-700 dark:text-white">
-                                Página {currentPage} de {totalPages}
-                            </span>
-                            <button
-                                onClick={handleNextPage}
-                                disabled={currentPage === totalPages}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400 dark:bg-blue-600 dark:hover:bg-blue-700"
-                            >
-                                Próxima
-                            </button>
-                        </div>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            handleNextPage={handleNextPage}
+                            handlePreviousPage={handlePreviousPage}
+                        />
                     </motion.div>
                 </div>
 
-                {/* Modal de Edição */}
                 {editingTransaction && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-                        <div className="bg-white p-6 rounded-lg shadow-lg w-96 dark:bg-gray-800">
-                            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Editar Transação</h2>
-                            <input
-                                type="text"
-                                placeholder="Descrição"
-                                value={editForm.description}
-                                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800"
-                            />
-                            <input
-                                type="number"
-                                placeholder="Valor"
-                                value={editForm.amount}
-                                onChange={(e) => setEditForm({ ...editForm, amount: Number(e.target.value) })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800"
-                            />
-                            <select
-                                value={editForm.type}
-                                onChange={(e) => setEditForm({ ...editForm, type: e.target.value as "income" | "expense" })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800" 
-                            >
-                                <option value="income">Receita</option>
-                                <option value="expense">Despesa</option>
-                            </select>
-                            <input
-                                type="text"
-                                placeholder="Categoria"
-                                value={editForm.category}
-                                onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800"
-                            />
-                            <input
-                                type="date"
-                                value={editForm.date}
-                                onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                                className="border p-2 rounded mb-3 w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white text-gray-800"
-                            />
-                            <div className="flex justify-end gap-2">
-                                <button onClick={() => setEditingTransaction(null)} className="bg-gray-400 text-white px-4 py-2 rounded dark:bg-gray-600">
-                                    Cancelar
-                                </button>
-                                <button onClick={handleUpdate} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
-                                    Atualizar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <EditTransactionModal
+                        editForm={editForm}
+                        setEditForm={setEditForm}
+                        setEditingTransaction={setEditingTransaction}
+                        handleUpdate={handleUpdate}
+                    />
                 )}
             </div>
             <Chatbot />
