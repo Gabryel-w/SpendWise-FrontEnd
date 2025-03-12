@@ -5,142 +5,174 @@ import Header from "@/components/header";
 import Footer from "@/components/Footer";
 
 export default function NewTransaction() {
-    const [description, setDescription] = useState("");
-    const [type, setType] = useState("income"); // "income" ou "expense"
-    const [amount, setAmount] = useState("");
-    const [category, setCategory] = useState("");
-    const [date, setDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [type, setType] = useState("income");
+  const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState("");
+  const [date, setDate] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-    const router = useRouter();
+  const router = useRouter();
 
-    useEffect(() =>{
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!user?.id) router.push("/login");
+  }, [router]);
 
-        if (!user?.id) {
-            router.push("/login");
-            return;
-        }
-    })
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-        if (!user?.id) {
-            router.push("/login");
-            return;
-        }
-
-        const transactionData = {
-            user_id: user.id,
-            description,
-            type,
-            amount: parseFloat(amount),
-            category,
-            date
-        };
-
-        try {
-            const response = await fetch("http://localhost:5000/transactions", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(transactionData),
-            });
-
-            if (!response.ok) {
-                throw new Error("Erro ao adicionar transação");
-            }
-
-            router.push("/dashboard"); // Redireciona para o Dashboard
-        } catch (error) {
-            console.error("Erro ao adicionar transação:", error);
-        }
+    const transactionData = {
+      user_id: user.id,
+      description,
+      type,
+      amount: parseFloat(amount),
+      category,
+      date,
     };
 
-    return (
+    try {
+      const response = await fetch("http://localhost:5000/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(transactionData),
+      });
 
-        <>
-            <Header />
+      if (!response.ok) throw new Error("Erro ao adicionar transação");
 
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-                <div className="max-w-md w-full bg-white p-6 rounded-lg shadow-md">
-                    <h1 className="text-2xl font-bold text-center mb-4 text-gray-800">Nova Transação</h1>
+      setSuccessMessage("Transação adicionada com sucesso!");
+      
+      setTimeout(() => router.push("/dashboard"), 1500); // Redireciona com delay
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-gray-700 font-medium">Descrição</label>
-                            <input
-                                type="text"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                className="w-full p-2 border rounded mt-1 text-gray-800"
-                                required
-                            />
-                        </div>
+  return (
+    <>
+      <Header />
 
-                        <div>
-                            <label className="block text-gray-700 font-medium">Tipo</label>
-                            <select
-                                value={type}
-                                onChange={(e) => setType(e.target.value)}
-                                className="w-full p-2 border rounded mt-1 text-gray-800"
-                                required
-                            >
-                                <option value="income">Receita</option>
-                                <option value="expense">Despesa</option>
-                            </select>
-                        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 px-4 py-8">
+        <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-lg">
+          <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+            Nova Transação
+          </h1>
 
-                        <div>
-                            <label className="block text-gray-700 font-medium">Valor (R$)</label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                className="w-full p-2 border rounded mt-1 text-gray-800"
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-gray-700 font-medium">Categoria</label>
-                            <input
-                                type="text"
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                                className="w-full p-2 border rounded mt-1 text-gray-800"
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-gray-700 font-medium">Data</label>
-                            <input
-                                type="date"
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                                className="w-full p-2 border rounded mt-1 text-gray-800"
-                                required
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
-                            Adicionar
-                        </button>
-                    </form>
-
-                    <button
-                        onClick={() => router.push("/dashboard")}
-                        className="mt-4 w-full bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition">
-                        Voltar ao Dashboard
-                    </button>
-                </div>
+          {/* Mensagem de erro */}
+          {errorMessage && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {errorMessage}
             </div>
-            <Footer />
-        </>
-    );
+          )}
+
+          {/* Mensagem de sucesso */}
+          {successMessage && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+              {successMessage}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Descrição */}
+            <div>
+              <label className="block text-gray-700 font-medium">Descrição</label>
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition text-gray-700"
+                placeholder="Ex: Salário, Mercado, Transporte..."
+                required
+              />
+            </div>
+
+            {/* Tipo */}
+            <div>
+              <label className="block text-gray-700 font-medium">Tipo</label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition text-gray-700"
+                required
+              >
+                <option value="income">Receita</option>
+                <option value="expense">Despesa</option>
+              </select>
+            </div>
+
+            {/* Valor */}
+            <div>
+              <label className="block text-gray-700 font-medium">Valor (R$)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition text-gray-700"
+                placeholder="Ex: 1500.00"
+                required
+              />
+            </div>
+
+            {/* Categoria */}
+            <div>
+              <label className="block text-gray-700 font-medium">Categoria</label>
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition text-gray-700"
+                placeholder="Ex: Alimentação, Transporte..."
+                required
+              />
+            </div>
+
+            {/* Data */}
+            <div>
+              <label className="block text-gray-700 font-medium">Data</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition text-gray-700"
+                required
+              />
+            </div>
+
+            {/* Botão Adicionar */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              {loading ? "Adicionando..." : "Adicionar Transação"}
+            </button>
+          </form>
+
+          {/* Botão Voltar */}
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="mt-4 w-full py-3 rounded-xl font-semibold text-white bg-gray-500 hover:bg-gray-600 transition"
+          >
+            Voltar ao Dashboard
+          </button>
+        </div>
+      </div>
+
+      <Footer />
+    </>
+  );
 }
