@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const About: React.FC = () => {
     return (
-        <section className="bg-gray-100 py-16">
+        <section id="about" className="bg-gray-100 py-16">
             <div className="max-w-6xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-12">
 
                 <div className="w-full md:w-1/2 bg-gray-400">

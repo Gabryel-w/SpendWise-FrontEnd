@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import { useRouter } from "next/navigation";
 import BalanceInfo from "@/components/balanceInfo";
 import Footer from "@/components/Footer";
+import ExportToCSV from "@/components/ExportToCSV";
 
 interface Transaction {
     id: string;
@@ -47,16 +48,6 @@ export default function GraphsPage() {
         fetchTransactions();
     }, []);
 
-    const exportToCSV = () => {
-        const csvContent = "data:text/csv;charset=utf-8," + transactions.map(t => `${t.date},${t.description},${t.category},${t.amount}`).join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "transacoes.csv");
-        document.body.appendChild(link);
-        link.click();
-    };
-
     const categories = Array.from(new Set(transactions.map(t => t.category)));
     const categoryData = categories.map(category => ({
         name: category,
@@ -85,9 +76,7 @@ export default function GraphsPage() {
 
     return (
         <>
-            <Header></Header>
-
-
+            <Header />
 
             <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900 dark:text-white">
                 <h1 className="text-3xl font-bold text-gray-900 mb-6 dark:text-white">Gráficos Financeiros</h1>
@@ -156,12 +145,16 @@ export default function GraphsPage() {
                     </div>
                 </div>
 
-                {/* Botão de Exportação */}
-                <button onClick={exportToCSV} className="bg-blue-500 text-white text-center px-4 py-2 rounded-md mt-6 dark:bg-blue-600">
-                    Exportar para CSV
-                </button>
+                {/* Botão de Exportação Centralizado e Estilizado */}
+                <div className="flex justify-center items-center mt-6">
+                    <ExportToCSV
+                        data={transactions}
+                        filename="transacoes"
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
+                    />
+                </div>
             </div>
-            
+
             <Footer />
         </>
     );

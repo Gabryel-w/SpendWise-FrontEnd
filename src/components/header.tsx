@@ -51,28 +51,35 @@ export default function Header() {
         <header className="bg-gray-900 text-white py-4 px-6 flex justify-between items-center shadow-md relative">
             <div className="flex items-center gap-6">
                 <h1 className="text-xl font-bold">
-                    <Link href="/dashboard">SpendWise</Link>
+                    <Link href="/">SpendWise</Link>
                 </h1>
-                <p className="hidden md:block text-sm font-semibold hover:text-blue-300 transition-colors duration-200">
-                    <Link href="/dashboard/charts">Gráficos financeiros</Link>
-                </p>
+
+                {user && (
+                    <>
+                        <p className="hidden md:block text-sm font-semibold hover:text-blue-500 transition-colors duration-200">
+                            <Link href="/dashboard">Dashboard</Link>
+                        </p>
+                        <p className="hidden md:block text-sm font-semibold hover:text-blue-500 transition-colors duration-200">
+                            <Link href="/dashboard/charts">Gráficos financeiros</Link>
+                        </p>
+                    </>
+                )}
             </div>
 
-            {/* Menu para telas maiores */}
             <nav className="hidden md:flex items-center gap-6">
                 {user ? (
                     <div className="relative">
                         <div className="flex items-center gap-2">
-                            {/* Texto "Olá" (não clicável) */}
+                          
                             <p className="text-sm">Olá,</p>
-                            {/* Nome do usuário (clicável) */}
+                     
                             <div
                                 onClick={toggleSubmenu}
                                 className="cursor-pointer text-sm hover:text-blue-300 transition-colors duration-200"
                             >
                                 {user.name || user.email}
                             </div>
-                            {/* Ícone de seta */}
+                         
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className={`h-4 w-4 transition-transform duration-200 ${isSubmenuOpen ? "rotate-180" : ""}`}
@@ -87,7 +94,6 @@ export default function Header() {
                             </svg>
                         </div>
 
-                        {/* Submenu */}
                         {isSubmenuOpen && (
                             <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                                 <div className="py-1">
@@ -114,7 +120,6 @@ export default function Header() {
                 )}
             </nav>
 
-            {/* Botão hambúrguer para telas menores */}
             <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="md:hidden p-2 focus:outline-none"
@@ -135,21 +140,25 @@ export default function Header() {
                 </svg>
             </button>
 
-            {/* Menu para telas menores */}
             <div
                 className={`md:hidden absolute top-full left-0 w-full bg-gray-800 text-white transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? "max-h-96" : "max-h-0"}`}
             >
                 <div className="p-4 flex flex-col gap-4">
-                    <p className="text-sm font-semibold hover:text-blue-300 transition-colors duration-200">
-                        <Link href="/dashboard/charts">Gráficos financeiros</Link>
-                    </p>
+                    {user && (
+                        <>
+                            <p className="text-sm font-semibold hover:text-blue-300 transition-colors duration-200">
+                                <Link href="/dashboard">Dashboard</Link>
+                            </p>
+                            <p className="text-sm font-semibold hover:text-blue-300 transition-colors duration-200">
+                                <Link href="/dashboard/charts">Gráficos financeiros</Link>
+                            </p>
+                        </>
+                    )}
 
                     {user ? (
                         <>
                             <div className="flex items-center gap-2">
-                                {/* Texto "Olá" (não clicável) */}
                                 <p className="text-sm">Olá,</p>
-                                {/* Nome do usuário (clicável) */}
                                 <div
                                     onClick={toggleSubmenu}
                                     className="cursor-pointer text-sm hover:text-blue-300 transition-colors duration-200"

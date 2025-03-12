@@ -1,14 +1,14 @@
 "use client";
 import Header from "@/components/header";
-import Banner from "@/components/Banner";
 import Footer from "@/components/Footer";
 import About from "@/components/About";
+import HeroSection from "@/components/heroSection";
 
 const Home: React.FC = () => {
     return (
         <div className="bg-white min-h-screen relative">
         <Header />
-        <Banner />
+        <HeroSection />
         <About />
         <div className="mt-52">
             <Footer />
