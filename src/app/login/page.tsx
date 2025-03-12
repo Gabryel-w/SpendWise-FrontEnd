@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import ImageCarousel from "@/components/ImageCarousel";
+import Footer from "@/components/Footer";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -84,6 +85,7 @@ export default function LoginPage() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

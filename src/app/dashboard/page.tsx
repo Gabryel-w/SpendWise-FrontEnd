@@ -11,6 +11,7 @@ import TransactionTable from "@/components/TransactionTable";
 import Pagination from "@/components/Pagination";
 import EditTransactionModal from "@/components/EditTransactionModal";
 import Filters from "@/components/Filters";
+import Footer from "@/components/Footer";
 
 interface Transaction {
     id: string;
@@ -218,6 +219,7 @@ export default function DashboardPage() {
                 )}
             </div>
             <Chatbot />
+            <Footer />
         </>
     );
 }

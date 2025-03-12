@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
+import Footer from "@/components/Footer";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -81,6 +82,7 @@ export default function RegisterPage() {
                     </p>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

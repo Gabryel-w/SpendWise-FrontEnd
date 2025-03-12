@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, L
 import Header from "@/components/header";
 import { useRouter } from "next/navigation";
 import BalanceInfo from "@/components/balanceInfo";
+import Footer from "@/components/Footer";
 
 interface Transaction {
     id: string;
@@ -156,10 +157,12 @@ export default function GraphsPage() {
                 </div>
 
                 {/* Botão de Exportação */}
-                <button onClick={exportToCSV} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-6 dark:bg-blue-600">
+                <button onClick={exportToCSV} className="bg-blue-500 text-white text-center px-4 py-2 rounded-md mt-6 dark:bg-blue-600">
                     Exportar para CSV
                 </button>
             </div>
+            
+            <Footer />
         </>
     );
 }

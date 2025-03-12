@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
+import Footer from "@/components/Footer";
 
 export default function NewTransaction() {
     const [description, setDescription] = useState("");
@@ -139,6 +140,7 @@ export default function NewTransaction() {
                     </button>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

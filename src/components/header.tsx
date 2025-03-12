@@ -48,7 +48,7 @@ export default function Header() {
     };
 
     return (
-        <header className="bg-[#141315] text-white py-4 px-6 flex justify-between items-center shadow-md relative">
+        <header className="bg-gray-900 text-white py-4 px-6 flex justify-between items-center shadow-md relative">
             <div className="flex items-center gap-6">
                 <h1 className="text-xl font-bold">
                     <Link href="/dashboard">SpendWise</Link>
