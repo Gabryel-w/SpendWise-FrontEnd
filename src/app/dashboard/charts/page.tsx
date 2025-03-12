@@ -79,7 +79,9 @@ export default function GraphsPage() {
             <Header />
 
             <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900 dark:text-white">
-                <h1 className="text-3xl font-bold text-gray-900 mb-6 dark:text-white">Gráficos Financeiros</h1>
+                <h1 className="text-4xl font-extrabold text-center mb-10 text-gray-800 dark:text-white tracking-tight">
+                    Painel Financeiro <span className="text-blue-600 dark:text-blue-400">Interativo</span>
+                </h1>
 
                 {/* Cards de Resumo */}
                 <BalanceInfo />

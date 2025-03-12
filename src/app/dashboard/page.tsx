@@ -12,6 +12,7 @@ import Pagination from "@/components/Pagination";
 import EditTransactionModal from "@/components/EditTransactionModal";
 import Filters from "@/components/Filters";
 import Footer from "@/components/Footer";
+import { Plus } from "lucide-react";
 
 interface Transaction {
     id: string;
@@ -37,6 +38,7 @@ export default function DashboardPage() {
 
     const router = useRouter();
 
+    // Fetch inicial
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
@@ -62,39 +64,25 @@ export default function DashboardPage() {
         fetchTransactions();
     }, []);
 
-    useEffect(() => {
-        const filtered = transactions.filter((transaction) =>
-            transaction.description.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredTransactions(filtered);
-        setCurrentPage(1);
-    }, [searchTerm, transactions]);
-
-    const handleEdit = (transaction: Transaction) => {
-        setEditingTransaction(transaction);
-        setEditForm(transaction);
-    };
-
+    // Filtros dinâmicos
     useEffect(() => {
         let filtered = transactions.filter((transaction) =>
             transaction.description.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-        if (filterType) {
-            filtered = filtered.filter((transaction) => transaction.type === filterType);
-        }
-
-        if (filterCategory) {
-            filtered = filtered.filter((transaction) => transaction.category === filterCategory);
-        }
-
-        if (filterDate) {
-            filtered = filtered.filter((transaction) => transaction.date === filterDate);
-        }
+        if (filterType) filtered = filtered.filter((t) => t.type === filterType);
+        if (filterCategory) filtered = filtered.filter((t) => t.category === filterCategory);
+        if (filterDate) filtered = filtered.filter((t) => t.date === filterDate);
 
         setFilteredTransactions(filtered);
         setCurrentPage(1);
     }, [searchTerm, filterType, filterCategory, filterDate, transactions]);
+
+    // Ações
+    const handleEdit = (transaction: Transaction) => {
+        setEditingTransaction(transaction);
+        setEditForm(transaction);
+    };
 
     const handleUpdate = async () => {
         if (!editingTransaction) return;
@@ -108,15 +96,9 @@ export default function DashboardPage() {
 
             if (!response.ok) throw new Error("Erro ao atualizar transação");
 
-            setTransactions((prevTransactions) => {
-                const updatedTransactions = prevTransactions.map((t) =>
-                    t.id === editingTransaction.id
-                        ? { ...t, ...editForm, type: editForm.type as "income" | "expense" }
-                        : t
-                );
-
-                return updatedTransactions;
-            });
+            setTransactions((prev) =>
+                prev.map((t) => (t.id === editingTransaction.id ? { ...t, ...editForm, type: editForm.type as "income" | "expense" } : t))
+            );
 
             setEditingTransaction(null);
         } catch (error) {
@@ -127,88 +109,82 @@ export default function DashboardPage() {
     const handleDelete = async (id: string) => {
         try {
             const response = await fetch(`http://localhost:5000/transactions/${id}`, { method: "DELETE" });
+            if (!response.ok) throw new Error("Erro ao deletar transação.");
 
-            if (!response.ok) {
-                throw new Error("Erro ao deletar transação.");
+            setTransactions((prev) => prev.filter((t) => t.id !== id));
+            const deletedTransaction = transactions.find((t) => t.id === id);
+            if (deletedTransaction) {
+                setBalance((prev) =>
+                    deletedTransaction.type === "income" ? prev - deletedTransaction.amount : prev + deletedTransaction.amount
+                );
             }
-
-            setTransactions((prev) => prev.filter((transaction) => transaction.id !== id));
-
-            setBalance((prev) => {
-                const deletedTransaction = transactions.find((t) => t.id === id);
-                if (!deletedTransaction) return prev;
-                return deletedTransaction.type === "income"
-                    ? prev - deletedTransaction.amount
-                    : prev + deletedTransaction.amount;
-            });
-
-            console.log("Transação deletada com sucesso.");
         } catch (error) {
             console.error(error);
         }
     };
 
+    // Paginação
     const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentTransactions = filteredTransactions.slice(indexOfFirstItem, indexOfLastItem);
-
+    const currentTransactions = filteredTransactions.slice(indexOfLastItem - itemsPerPage, indexOfLastItem);
     const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
+    const handleNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+    const handlePreviousPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
 
     return (
         <>
             <Header />
-            <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900">
-                <div className="grid grid-cols-1">
-                    <BalanceInfo />
-                    <motion.div className="bg-white p-4 rounded-xl shadow-md col-span-2 dark:bg-gray-800">
-                        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-                            <div className="w-full sm:w-auto">
-                                <Link href="/dashboard/new-transaction">
-                                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700 w-full sm:w-auto">
-                                        Adicionar Nova Transação
-                                    </button>
-                                </Link>
-                            </div>
+            <main className="p-4 sm:p-8 bg-gray-100 dark:bg-gray-900 min-h-screen space-y-6">
 
-                            <Filters
-                                searchTerm={searchTerm}
-                                setSearchTerm={setSearchTerm}
-                                filterType={filterType}
-                                setFilterType={setFilterType}
-                                filterCategory={filterCategory}
-                                setFilterCategory={setFilterCategory}
-                                filterDate={filterDate}
-                                setFilterDate={setFilterDate}
-                            />
-                        </div>
+                <BalanceInfo />
 
-                        <TransactionTable
-                            transactions={currentTransactions}
-                            handleEdit={handleEdit}
-                            handleDelete={handleDelete}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 space-y-6"
+                >
+
+                    {/* Cabeçalho com botão e filtros */}
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <Link href="/dashboard/new-transaction">
+                            <button
+                                title="Adicionar Nova Transação"
+                                className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition"
+                            >
+                                <Plus className="w-5 h-5" />
+                            </button>
+                        </Link>
+
+                        <Filters
+                            searchTerm={searchTerm}
+                            setSearchTerm={setSearchTerm}
+                            filterType={filterType}
+                            setFilterType={setFilterType}
+                            filterCategory={filterCategory}
+                            setFilterCategory={setFilterCategory}
+                            filterDate={filterDate}
+                            setFilterDate={setFilterDate}
                         />
+                    </div>
 
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            handleNextPage={handleNextPage}
-                            handlePreviousPage={handlePreviousPage}
-                        />
-                    </motion.div>
-                </div>
+                    {/* Tabela de Transações */}
+                    <TransactionTable
+                        transactions={currentTransactions}
+                        handleEdit={handleEdit}
+                        handleDelete={handleDelete}
+                    />
 
+                    {/* Paginação */}
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        handleNextPage={handleNextPage}
+                        handlePreviousPage={handlePreviousPage}
+                    />
+                </motion.div>
+
+                {/* Modal de Edição */}
                 {editingTransaction && (
                     <EditTransactionModal
                         editForm={editForm}
@@ -217,7 +193,8 @@ export default function DashboardPage() {
                         handleUpdate={handleUpdate}
                     />
                 )}
-            </div>
+            </main>
+
             <Chatbot />
             <Footer />
         </>
