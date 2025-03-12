@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<h1 align="center" id="title">SpendWise Front End</h1>
 
-## Getting Started
+<p align="center"><img src="https://socialify.git.ci/Gabryel-w/SpendWise-FrontEnd/image?language=1&amp;name=1&amp;owner=1&amp;pattern=Circuit+Board&amp;theme=Dark" alt="project-image"></p>
 
-First, run the development server:
+<p id="description">SpendWise is a personal finance management system that features a chatbot designed to assist users with their financial inquiries. The chatbot retrieves predefined FAQs and user transaction data to recommend relevant queries. Additionally the system includes graphs to help users track their spending and income.</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  
+  
+<h2>🧐 Features</h2>
+
+Here're some of the project's best features:
+
+*   User Authentication (via Supabase)
+*   Financial Transaction Management
+*   Chatbot (Predefined FAQs and transaction-based suggestions)
+*   Responsive UI with Tailwind CSS
+*   Dynamic financial charts
+
+<h2>🛠️ Installation Steps:</h2>
+
+<p>1. Clone the repository</p>
+
+```
+Inside a folder open your terminal and do a git clone in the repository.
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<p>2. Installing dependencies</p>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+with the cloned project folder open the terminal in it and run the command "npm install" to install the project dependencies
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+<p>3. Installing the backend</p>
 
-## Learn More
+```
+For the application to work the backend must be installed and configured. Follow the steps in the following repository to do so: https://github.com/Gabryel-w/SpendWise-Backend
+```
 
-To learn more about Next.js, take a look at the following resources:
+<p>4. running the application</p>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  
+  
+<h2>💻 Built with</h2>
 
-## Deploy on Vercel
+Technologies used in the project:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*   Next.js
+*   TypeScript
+*   Tailwind CSS
+*   Supabase (for authentication and database)
+*   Lucide-React (for icons)
