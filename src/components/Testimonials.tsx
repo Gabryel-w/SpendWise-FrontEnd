@@ -7,21 +7,21 @@ export default function Testimonials() {
       role: "Empreendedora",
       feedback:
         "O SpendWise me ajudou a organizar as finanças do meu negócio. Finalmente consigo visualizar minhas despesas e receitas de forma clara e prática.",
-      avatar: "/avatars/avatar1.jpg", 
+      avatar: "/userWoman.png",
     },
     {
       name: "Carlos Santos",
       role: "Desenvolvedor",
       feedback:
         "Excelente app! Consigo acompanhar meus gastos do dia a dia e entender para onde meu dinheiro está indo. Recomendo para todos que querem ter mais controle financeiro.",
-      avatar: "/avatars/avatar2.jpg",
+      avatar: "/userMan.png",
     },
     {
       name: "Ana Souza",
       role: "Designer",
       feedback:
         "O visual é intuitivo e os gráficos ajudam muito a visualizar meus gastos. Simplesmente o melhor app de finanças pessoais que já usei!",
-      avatar: "/avatars/avatar3.jpg",
+      avatar: "/userWoman.png",
     },
   ];
 

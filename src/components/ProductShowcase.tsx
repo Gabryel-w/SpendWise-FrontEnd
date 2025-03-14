@@ -28,7 +28,7 @@ export default function ProductShowcase() {
 
             <div className="relative w-[300px] h-[550px] rounded-3xl shadow-2xl overflow-hidden border-4 border-white dark:border-gray-800">
               <Image
-                src="/images/app-print-1.png" 
+                src="/dashboard.png" 
                 alt="Tela do app SpendWise"
                 layout="fill"
                 objectFit="cover"
@@ -38,7 +38,7 @@ export default function ProductShowcase() {
 
             <div className="absolute -right-16 top-10 w-[200px] h-[400px] rounded-3xl shadow-xl overflow-hidden border-4 border-white dark:border-gray-800 hidden md:block">
               <Image
-                src="/images/app-print-2.png" 
+                src="/charts.png" 
                 alt="Tela adicional do app"
                 layout="fill"
                 objectFit="cover"

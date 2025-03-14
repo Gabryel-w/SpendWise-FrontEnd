@@ -7,19 +7,19 @@ export default function HowItWorks() {
       title: "1. Crie sua Conta",
       description:
         "Cadastre-se em poucos segundos e comece a controlar suas finanças de forma prática e rápida.",
-      icon: "/icons/account.svg", 
+      icon: "/user.png", 
     },
     {
       title: "2. Registre suas Transações",
       description:
         "Adicione receitas e despesas com facilidade. Organize por categorias e datas.",
-      icon: "/icons/transaction.svg",
+      icon: "/transaction.png",
     },
     {
       title: "3. Acompanhe seu Progresso",
       description:
         "Visualize gráficos e relatórios personalizados para entender e melhorar sua vida financeira.",
-      icon: "/icons/analytics.svg",
+      icon: "/progress.png",
     },
   ];
 
