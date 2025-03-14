@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import Header from "@/components/header";
 import BalanceInfo from "@/components/balanceInfo";
@@ -13,6 +12,7 @@ import EditTransactionModal from "@/components/EditTransactionModal";
 import Filters from "@/components/Filters";
 import Footer from "@/components/Footer";
 import { Plus } from "lucide-react";
+import NewTransactionModal from "@/components/NewTransactionModal";
 
 interface Transaction {
     id: string;
@@ -35,39 +35,40 @@ export default function DashboardPage() {
     const [filterDate, setFilterDate] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
+    const [showAddModal, setShowAddModal] = useState(false);
 
     const router = useRouter();
+    const fetchTransactions = async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem("user") || "{}");
+            if (!user?.id) {
+                router.push("/login");
+                return;
+            }
 
+            const response = await fetch(`http://localhost:5000/transactions?user_id=${user.id}`);
+            const data = await response.json();
+            setTransactions(data);
+            setFilteredTransactions(data);
+
+            const total = data.reduce((acc: number, transaction: Transaction) => {
+                return transaction.type === "income" ? acc + transaction.amount : acc - transaction.amount;
+            }, 0);
+            setBalance(total);
+        } catch (error) {
+            console.error("Erro ao buscar transações", error);
+        }
+    };
     // Fetch inicial
     useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                const user = JSON.parse(localStorage.getItem("user") || "{}");
-                if (!user?.id) {
-                    router.push("/login");
-                    return;
-                }
-
-                const response = await fetch(`http://localhost:5000/transactions?user_id=${user.id}`);
-                const data = await response.json();
-                setTransactions(data);
-                setFilteredTransactions(data);
-
-                const total = data.reduce((acc: number, transaction: Transaction) => {
-                    return transaction.type === "income" ? acc + transaction.amount : acc - transaction.amount;
-                }, 0);
-                setBalance(total);
-            } catch (error) {
-                console.error("Erro ao buscar transações", error);
-            }
-        };
+       
         fetchTransactions();
-    }, []);
+    }, [router]);
 
     // Filtros dinâmicos
     useEffect(() => {
         let filtered = transactions.filter((transaction) =>
-            transaction.description.toLowerCase().includes(searchTerm.toLowerCase())
+            transaction.description?.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
         if (filterType) filtered = filtered.filter((t) => t.type === filterType);
@@ -123,6 +124,15 @@ export default function DashboardPage() {
         }
     };
 
+    // Adicionar nova transação
+    const handleAddTransaction = (newTransaction: Transaction) => {
+        // Atualiza todas as transações
+        setTransactions((prev) => [newTransaction, ...prev]);
+    
+        // Atualiza apenas a listagem filtrada
+        fetchTransactions();
+    };
+
     // Paginação
     const indexOfLastItem = currentPage * itemsPerPage;
     const currentTransactions = filteredTransactions.slice(indexOfLastItem - itemsPerPage, indexOfLastItem);
@@ -147,14 +157,13 @@ export default function DashboardPage() {
 
                     {/* Cabeçalho com botão e filtros */}
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <Link href="/dashboard/new-transaction">
-                            <button
-                                title="Adicionar Nova Transação"
-                                className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition"
-                            >
-                                <Plus className="w-5 h-5" />
-                            </button>
-                        </Link>
+                        <button
+                            title="Adicionar Nova Transação"
+                            onClick={() => setShowAddModal(true)}
+                            className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition"
+                        >
+                            <Plus className="w-5 h-5" />
+                        </button>
 
                         <Filters
                             searchTerm={searchTerm}
@@ -191,6 +200,14 @@ export default function DashboardPage() {
                         setEditForm={setEditForm}
                         setEditingTransaction={setEditingTransaction}
                         handleUpdate={handleUpdate}
+                    />
+                )}
+
+                {/* Modal de Adição */}
+                {showAddModal && (
+                    <NewTransactionModal
+                        onClose={() => setShowAddModal(false)}
+                        onSuccess={handleAddTransaction}
                     />
                 )}
             </main>
