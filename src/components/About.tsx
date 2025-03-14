@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const About: React.FC = () => {
     return (
-        <section id="about" className="bg-gray-100 py-16">
+        <section id="about" className="bg-gray-100 py-16 dark:bg-gray-900">
             <div className="max-w-6xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-12">
 
                 <div className="w-full md:w-1/2 bg-gray-400">
@@ -19,15 +19,15 @@ const About: React.FC = () => {
                 </div>
 
                 <div className="w-full md:w-1/2">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 dark:text-white">
                         Sobre o Spend Wise
                     </h2>
-                    <p className="text-gray-700 text-lg leading-relaxed mb-4">
-                        O <span className="font-semibold text-blue-600">Spend Wise</span> é um sistema inovador de gerenciamento de finanças pessoais.
+                    <p className="text-gray-700 text-lg leading-relaxed mb-4 dark:text-white">
+                        O <span className="font-semibold text-blue-600 dark:text-white">Spend Wise</span> é um sistema inovador de gerenciamento de finanças pessoais.
                         Nossa missão é ajudar você a organizar seus gastos, economizar de forma inteligente
                         e alcançar seus objetivos financeiros sem complicação.
                     </p>
-                    <p className="text-gray-700 text-lg leading-relaxed mb-6">
+                    <p className="text-gray-700 text-lg leading-relaxed mb-6 dark:text-white">
                         Com ferramentas intuitivas e relatórios detalhados, o Spend Wise permite que você
                         tenha total controle sobre sua vida financeira, garantindo um futuro mais seguro.
                     </p>
