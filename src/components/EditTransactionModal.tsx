@@ -88,4 +88,3 @@ interface EditTransactionModalProps {
       </div>
     );
   }
-  

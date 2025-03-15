@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { FiEdit, FiTrash } from "react-icons/fi";
+import { FiEdit, FiTrash, FiMove } from "react-icons/fi";
 
 interface Transaction {
   id: string;
@@ -18,7 +18,12 @@ interface SortableItemProps {
   handleDelete: (id: string) => void;
 }
 
-export function SortableItem({ id, transaction, handleEdit, handleDelete }: SortableItemProps) {
+export function SortableItem({
+  id,
+  transaction,
+  handleEdit,
+  handleDelete,
+}: SortableItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
@@ -27,7 +32,19 @@ export function SortableItem({ id, transaction, handleEdit, handleDelete }: Sort
   };
 
   return (
-    <tr ref={setNodeRef} style={style} {...attributes} {...listeners} className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+    >
+      <td
+        className="px-4 py-3 flex justify-center items-center text-gray-500 cursor-move"
+        {...attributes}
+        {...listeners}
+        title="Arrastar"
+      >
+        <FiMove />
+      </td>
       <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{transaction.description}</td>
       <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{transaction.date}</td>
       <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{transaction.category}</td>
@@ -40,14 +57,20 @@ export function SortableItem({ id, transaction, handleEdit, handleDelete }: Sort
       </td>
       <td className="px-4 py-3 flex justify-center gap-3">
         <button
-          onClick={() => handleEdit(transaction)}
+          onClick={(e) => {
+            e.stopPropagation(); // Evita problemas com drag
+            handleEdit(transaction);
+          }}
           className="text-blue-500 hover:text-blue-600 transition-colors"
           title="Editar"
         >
           <FiEdit size={18} />
         </button>
         <button
-          onClick={() => handleDelete(transaction.id)}
+          onClick={(e) => {
+            e.stopPropagation(); // Evita problemas com drag
+            handleDelete(transaction.id);
+          }}
           className="text-red-500 hover:text-red-600 transition-colors"
           title="Excluir"
         >
