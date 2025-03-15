@@ -1,29 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useContext } from "react";
+import { DarkModeContext } from "@/context/DarkModeContext";
 
 const DarkModeToggle = () => {
-    const [darkMode, setDarkMode] = useState(false);
-
-    // Verifica o tema salvo no localStorage ao carregar o componente
-    useEffect(() => {
-        const savedDarkMode = localStorage.getItem("darkMode") === "true";
-        setDarkMode(savedDarkMode);
-    }, []);
-
-    // Aplica ou remove o modo escuro no body e salva no localStorage
-    useEffect(() => {
-        if (darkMode) {
-            document.documentElement.classList.add("dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-        }
-        localStorage.setItem("darkMode", darkMode.toString());
-    }, [darkMode]);
+    const { darkMode, toggleDarkMode } = useContext(DarkModeContext);
 
     return (
         <button
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={toggleDarkMode}
             className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 transition-all duration-500 hover:scale-110"
         >
             {darkMode ? (
