@@ -11,9 +11,10 @@ interface Contribution {
 
 interface GoalContributionHistoryProps {
   goalId: string;
+  refreshTrigger?: number; 
 }
 
-export default function GoalContributionHistory({ goalId }: GoalContributionHistoryProps) {
+export default function GoalContributionHistory({ goalId, refreshTrigger }: GoalContributionHistoryProps) {
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +22,7 @@ export default function GoalContributionHistory({ goalId }: GoalContributionHist
     try {
       const res = await fetch(`http://localhost:5000/goal-contributions?goal_id=${goalId}`);
       const data = await res.json();
-      
+
       setContributions(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao buscar contribuições:", error);
@@ -32,7 +33,7 @@ export default function GoalContributionHistory({ goalId }: GoalContributionHist
 
   useEffect(() => {
     fetchContributions();
-  }, [goalId]);
+  }, [goalId, refreshTrigger]); 
 
   return (
     <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">

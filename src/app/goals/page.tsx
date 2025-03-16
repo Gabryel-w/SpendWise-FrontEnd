@@ -25,6 +25,7 @@ export default function GoalsPage() {
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [contributingGoalId, setContributingGoalId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState<{ [key: string]: boolean }>({});
+  const [historyRefreshCounter, setHistoryRefreshCounter] = useState(0);
 
   const fetchGoals = async () => {
     try {
@@ -128,7 +129,12 @@ export default function GoalsPage() {
                   </button>
                 </div>
 
-                {showHistory[goal.id] && <GoalContributionHistory goalId={goal.id} />}
+                {showHistory[goal.id] && (
+                  <GoalContributionHistory
+                    goalId={goal.id}
+                    refreshTrigger={historyRefreshCounter} 
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -144,7 +150,10 @@ export default function GoalsPage() {
             isOpen={!!contributingGoalId}
             onClose={() => setContributingGoalId(null)}
             goalId={contributingGoalId}
-            onContributionAdded={fetchGoals}
+            onContributionAdded={() => {
+              fetchGoals();
+              setHistoryRefreshCounter((prev) => prev + 1); 
+            }}
           />
         )}
       </div>
