@@ -6,14 +6,13 @@ import { X } from "lucide-react";
 interface GoalModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onGoalCreated: () => void; 
+  onGoalCreated: () => void;
 }
 
 export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalProps) {
-  const [name, setName] = useState("");
-  const [targetAmount, setTargetAmount] = useState("");
+  const [title, setTitle] = useState("");
+  const [goalAmount, setGoalAmount] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,10 +29,10 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_id: user.id,
-          name,
-          target_amount: parseFloat(targetAmount),
+          title, 
+          goal_amount: parseFloat(goalAmount), 
+          saved_amount: 0, 
           deadline,
-          description,
         }),
       });
 
@@ -42,8 +41,8 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
         throw new Error(errorData.error || "Erro ao criar meta");
       }
 
-      onGoalCreated(); 
-      onClose(); 
+      onGoalCreated();
+      onClose();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -60,51 +59,41 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-semibold mb-4">Nova Meta</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Nova Meta</h2>
 
         {error && <p className="text-red-500 mb-3">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">Nome da Meta</label>
+            <label className="block text-sm font-medium text-gray-800">Título da Meta</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border rounded-lg p-2 mt-1"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full border rounded-lg p-2 mt-1 text-gray-800"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Valor Alvo (R$)</label>
+            <label className="block text-sm font-medium text-gray-800">Valor Alvo (R$)</label>
             <input
               type="number"
-              value={targetAmount}
-              onChange={(e) => setTargetAmount(e.target.value)}
-              className="w-full border rounded-lg p-2 mt-1"
+              value={goalAmount}
+              onChange={(e) => setGoalAmount(e.target.value)}
+              className="w-full border rounded-lg p-2 mt-1 text-gray-800"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Data Limite</label>
+            <label className="block text-sm font-medium text-gray-800">Data Limite</label>
             <input
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full border rounded-lg p-2 mt-1"
+              className="w-full border rounded-lg p-2 mt-1 text-gray-800"
               required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Descrição</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full border rounded-lg p-2 mt-1"
-              rows={3}
             />
           </div>
 
