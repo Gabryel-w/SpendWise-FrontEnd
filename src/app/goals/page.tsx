@@ -8,6 +8,7 @@ import GoalContributionModal from "@/components/GoalContributionModal";
 import GoalContributionHistory from "@/components/GoalContributionHistory";
 import Header from "@/components/header";
 import Footer from "@/components/Footer";
+import PopUpConfirmDialog from "@/components/PopUpConfirmDialog"; // Import the PopUpConfirmDialog component
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -34,6 +35,8 @@ export default function GoalsPage() {
   const [contributingGoalId, setContributingGoalId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState<{ [key: string]: boolean }>({});
   const [historyRefreshCounter, setHistoryRefreshCounter] = useState(0);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false); // State for confirmation dialog
+  const [goalToDelete, setGoalToDelete] = useState<string | null>(null); // State to store the goal to be deleted
 
   const fetchGoals = async () => {
     try {
@@ -49,10 +52,13 @@ export default function GoalsPage() {
   };
 
   const handleDeleteGoal = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir esta meta?")) {
-      await fetch(`http://localhost:5000/goals/${id}`, { method: "DELETE" });
-      fetchGoals();
-    }
+    await fetch(`http://localhost:5000/goals/${id}`, { method: "DELETE" });
+    fetchGoals();
+  };
+
+  const handleConfirmDelete = (id: string) => {
+    setGoalToDelete(id);
+    setIsConfirmDialogOpen(true);
   };
 
   const handleDragEnd = (event: any) => {
@@ -98,7 +104,7 @@ export default function GoalsPage() {
                     key={goal.id}
                     goal={goal}
                     onEdit={() => setEditingGoal(goal)}
-                    onDelete={() => handleDeleteGoal(goal.id)}
+                    onDelete={() => handleConfirmDelete(goal.id)} // Use handleConfirmDelete instead of handleDeleteGoal
                     onContribute={() => setContributingGoalId(goal.id)}
                     onToggleHistory={() =>
                       setShowHistory((prev) => ({
@@ -129,6 +135,18 @@ export default function GoalsPage() {
             }}
           />
         )}
+        <PopUpConfirmDialog
+          isOpen={isConfirmDialogOpen}
+          message="Tem certeza que deseja excluir esta meta?"
+          onConfirm={() => {
+            if (goalToDelete) {
+              handleDeleteGoal(goalToDelete);
+              setGoalToDelete(null);
+            }
+            setIsConfirmDialogOpen(false);
+          }}
+          onCancel={() => setIsConfirmDialogOpen(false)}
+        />
       </div>
       <Footer />
     </>
