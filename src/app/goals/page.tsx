@@ -8,6 +8,14 @@ import GoalContributionModal from "@/components/GoalContributionModal";
 import GoalContributionHistory from "@/components/GoalContributionHistory";
 import Header from "@/components/header";
 import Footer from "@/components/Footer";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Goal {
   id: string;
@@ -47,6 +55,15 @@ export default function GoalsPage() {
     }
   };
 
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const oldIndex = goals.findIndex((goal) => goal.id === active.id);
+      const newIndex = goals.findIndex((goal) => goal.id === over.id);
+      setGoals((goals) => arrayMove(goals, oldIndex, newIndex));
+    }
+  };
+
   useEffect(() => {
     fetchGoals();
   }, []);
@@ -73,78 +90,34 @@ export default function GoalsPage() {
         ) : goals.length === 0 ? (
           <p className="text-gray-500">Nenhuma meta cadastrada.</p>
         ) : (
-          <div className="space-y-6">
-            {goals.map((goal) => (
-              <div key={goal.id} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md space-y-3">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-white">{goal.title}</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Prazo: {new Date(goal.deadline).toLocaleDateString()}
-                  </p>
-                </div>
-
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
-                  <div
-                    className="bg-green-500 h-4 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${Math.min((goal.saved_amount / goal.goal_amount) * 100, 100)}%`,
-                    }}
-                  ></div>
-                </div>
-
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {goal.saved_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} de{" "}
-                  {goal.goal_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                </p>
-
-                <div className="flex justify-end gap-2">
-                  <button
-                    onClick={() => setContributingGoalId(goal.id)}
-                    className="flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700"
-                  >
-                    <PiggyBank className="w-4 h-4" /> Contribuir
-                  </button>
-                  <button
-                    onClick={() => setEditingGoal(goal)}
-                    className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600"
-                  >
-                    <Pencil className="w-4 h-4" /> Editar
-                  </button>
-                  <button
-                    onClick={() => handleDeleteGoal(goal.id)}
-                    className="flex items-center gap-1 bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
-                  >
-                    <Trash className="w-4 h-4" /> Excluir
-                  </button>
-                  <button
-                    onClick={() =>
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={goals.map((goal) => goal.id)} strategy={verticalListSortingStrategy}>
+              <div className="space-y-6">
+                {goals.map((goal) => (
+                  <SortableGoalCard
+                    key={goal.id}
+                    goal={goal}
+                    onEdit={() => setEditingGoal(goal)}
+                    onDelete={() => handleDeleteGoal(goal.id)}
+                    onContribute={() => setContributingGoalId(goal.id)}
+                    onToggleHistory={() =>
                       setShowHistory((prev) => ({
                         ...prev,
                         [goal.id]: !prev[goal.id],
                       }))
                     }
-                    className="flex items-center gap-1 bg-gray-500 text-white px-3 py-1 rounded-lg hover:bg-gray-600"
-                  >
-                    Histórico
-                  </button>
-                </div>
-
-                {showHistory[goal.id] && (
-                  <GoalContributionHistory
-                    goalId={goal.id}
-                    refreshTrigger={historyRefreshCounter} 
+                    showHistory={showHistory[goal.id]}
+                    historyRefreshCounter={historyRefreshCounter}
                   />
-                )}
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
         )}
 
         {/* Modais */}
         <GoalModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onGoalCreated={fetchGoals} />
-        {editingGoal && (
-          <EditGoalModal goal={editingGoal} onClose={() => setEditingGoal(null)} onGoalUpdated={fetchGoals} />
-        )}
+        {editingGoal && <EditGoalModal goal={editingGoal} onClose={() => setEditingGoal(null)} onGoalUpdated={fetchGoals} />}
         {contributingGoalId && (
           <GoalContributionModal
             isOpen={!!contributingGoalId}
@@ -152,12 +125,106 @@ export default function GoalsPage() {
             goalId={contributingGoalId}
             onContributionAdded={() => {
               fetchGoals();
-              setHistoryRefreshCounter((prev) => prev + 1); 
+              setHistoryRefreshCounter((prev) => prev + 1);
             }}
           />
         )}
       </div>
       <Footer />
     </>
+  );
+}
+
+// Componente Sortable Card
+function SortableGoalCard({
+  goal,
+  onEdit,
+  onDelete,
+  onContribute,
+  onToggleHistory,
+  showHistory,
+  historyRefreshCounter,
+}: {
+  goal: Goal;
+  onEdit: () => void;
+  onDelete: () => void;
+  onContribute: () => void;
+  onToggleHistory: () => void;
+  showHistory: boolean;
+  historyRefreshCounter: number;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: goal.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const isCompleted = goal.saved_amount >= goal.goal_amount;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`relative p-6 rounded-2xl shadow-lg space-y-3 transition-all duration-300 ${
+        isCompleted
+          ? "border-4 border-emerald-500 bg-gradient-to-r from-green-50 to-white dark:from-green-900 dark:to-gray-800"
+          : "bg-white dark:bg-gray-800"
+      }`}
+    >
+      <button
+        {...attributes}
+        {...listeners}
+        className="absolute top-2 left-2 p-2 bg-gray-200 dark:bg-gray-700 rounded-full cursor-grab"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 text-gray-600 dark:text-gray-300"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm4 0a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zM6 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+
+      {isCompleted && (
+        <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-semibold px-3 py-1 rounded-bl-2xl rounded-tr-xl shadow-md">
+          🎉 Concluída
+        </div>
+      )}
+
+      <div className="flex justify-between items-center">
+        <h2 className={`text-xl font-semibold ${isCompleted ? "text-emerald-700 dark:text-emerald-300" : "text-gray-800 dark:text-white"}`}>
+          {goal.title}
+        </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Prazo: {new Date(goal.deadline).toLocaleDateString()}</p>
+      </div>
+
+      <div className={`w-full h-4 rounded-full overflow-hidden ${isCompleted ? "bg-emerald-200 dark:bg-emerald-800" : "bg-gray-200 dark:bg-gray-700"}`}>
+        <div
+          className={`h-4 rounded-full transition-all duration-500 ${isCompleted ? "bg-gradient-to-r from-green-400 to-emerald-600" : "bg-green-500"}`}
+          style={{ width: `${Math.min((goal.saved_amount / goal.goal_amount) * 100, 100)}%` }}
+        ></div>
+      </div>
+
+      <p className={`text-sm ${isCompleted ? "text-emerald-700 dark:text-emerald-300 font-semibold" : "text-gray-600 dark:text-gray-300"}`}>
+        {goal.saved_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} de {goal.goal_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+      </p>
+
+      <div className="flex justify-end gap-2">
+        {!isCompleted && <button onClick={onContribute} className="btn bg-green-600 hover:bg-green-700"><PiggyBank /> Contribuir</button>}
+        <button onClick={onEdit} className="btn bg-yellow-500 hover:bg-yellow-600"><Pencil /> Editar</button>
+        <button onClick={onDelete} className="btn bg-red-600 hover:bg-red-700"><Trash /> Excluir</button>
+        <button onClick={onToggleHistory} className="btn bg-gray-500 hover:bg-gray-600">Histórico</button>
+      </div>
+
+      {showHistory && (
+        <GoalContributionHistory goalId={goal.id} refreshTrigger={historyRefreshCounter} />
+      )}
+    </div>
   );
 }
