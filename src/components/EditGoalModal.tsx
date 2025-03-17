@@ -49,54 +49,54 @@ export default function EditGoalModal({ goal, onClose, onGoalUpdated }: EditGoal
                     <X className="w-6 h-6" />
                 </button>
 
-                <h2 className="text-2xl font-semibold mb-4">Editar Meta</h2>
+                <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Editar Meta</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium">Título da Meta</label>
+                        <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">Título da Meta</label>
                         <input
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full border rounded-lg p-2 mt-1"
+                            className="w-full border rounded-lg p-2 mt-1 text-gray-800 dark:text-gray-600"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Valor Alvo (R$)</label>
+                        <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">Valor Alvo (R$)</label>
                         <input
                             type="number"
                             value={goalAmount}
                             onChange={(e) => setGoalAmount(e.target.value)}
-                            className="w-full border rounded-lg p-2 mt-1"
+                            className="w-full border rounded-lg p-2 mt-1 text-gray-800 dark:text-gray-600"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Valor Atual (R$)</label>
+                        <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">Valor Atual (R$)</label>
                         <input
                             type="number"
                             value={savedAmount}
                             onChange={(e) => setSavedAmount(e.target.value)}
-                            className="w-full border rounded-lg p-2 mt-1"
+                            className="w-full border rounded-lg p-2 mt-1 text-gray-800 dark:text-gray-600"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium">Data Limite</label>
+                        <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">Data Limite</label>
                         <input
                             type="date"
                             value={deadline}
                             onChange={(e) => setDeadline(e.target.value)}
-                            className="w-full border rounded-lg p-2 mt-1"
+                            className="w-full border rounded-lg p-2 mt-1 text-gray-800 dark:text-gray-600"
                             required
                         />
                     </div>
 
-                    <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded-lg">
+                    <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded-lg text-gray-800 dark:text-gray-200">
                         {loading ? "Atualizando..." : "Atualizar Meta"}
                     </button>
                 </form>

@@ -25,7 +25,6 @@ export default function GoalContributionModal({
     setLoading(true);
     setError(null);
 
-    // Validação simples
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       setError("Insira um valor válido e maior que 0.");
@@ -70,13 +69,13 @@ export default function GoalContributionModal({
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-semibold mb-4 text-center">Nova Contribuição</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800 dark:text-gray-200">Nova Contribuição</h2>
 
         {error && <p className="text-red-500 mb-3 text-center">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm mb-1">Valor da Contribuição (R$)</label>
+            <label className="block text-sm mb-1 text-gray-800 dark:text-gray-200">Valor da Contribuição (R$)</label>
             <input
               type="number"
               value={amount}
@@ -84,7 +83,7 @@ export default function GoalContributionModal({
               placeholder="Ex: 100"
               min="0.01"
               step="0.01"
-              className="w-full border rounded-lg p-3 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border rounded-lg p-3 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-800 dark:text-gray-200"
               required
             />
           </div>

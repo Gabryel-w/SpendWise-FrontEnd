@@ -135,7 +135,6 @@ export default function GoalsPage() {
   );
 }
 
-// Componente Sortable Card
 function SortableGoalCard({
   goal,
   onEdit,
@@ -166,29 +165,17 @@ function SortableGoalCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative p-6 rounded-2xl shadow-lg space-y-3 transition-all duration-300 ${
-        isCompleted
-          ? "border-4 border-emerald-500 bg-gradient-to-r from-green-50 to-white dark:from-green-900 dark:to-gray-800"
-          : "bg-white dark:bg-gray-800"
-      }`}
+      className={`relative p-6 border-4 border-blue-500 rounded-2xl shadow-lg space-y-3 transition-all duration-300 ${isCompleted
+        ? "border-4 border-emerald-500 bg-gradient-to-r from-green-50 to-white dark:from-green-900 dark:to-gray-800"
+        : "bg-white dark:bg-gray-800"
+        }`}
     >
       <button
         {...attributes}
         {...listeners}
-        className="absolute top-2 left-2 p-2 bg-gray-200 dark:bg-gray-700 rounded-full cursor-grab"
+        className="top-1 left-1 p-2 bg-gray-700 rounded-full cursor-grab "
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-600 dark:text-gray-300"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M10 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm4 0a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zM6 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>
       </button>
 
       {isCompleted && (
@@ -215,11 +202,33 @@ function SortableGoalCard({
         {goal.saved_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} de {goal.goal_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
       </p>
 
-      <div className="flex justify-end gap-2">
-        {!isCompleted && <button onClick={onContribute} className="btn bg-green-600 hover:bg-green-700"><PiggyBank /> Contribuir</button>}
-        <button onClick={onEdit} className="btn bg-yellow-500 hover:bg-yellow-600"><Pencil /> Editar</button>
-        <button onClick={onDelete} className="btn bg-red-600 hover:bg-red-700"><Trash /> Excluir</button>
-        <button onClick={onToggleHistory} className="btn bg-gray-500 hover:bg-gray-600">Histórico</button>
+      <div className="flex justify-end gap-2 flex-wrap">
+        {!isCompleted && (
+          <button
+            onClick={onContribute}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+          >
+            <PiggyBank className="w-4 h-4" /> Contribuir
+          </button>
+        )}
+        <button
+          onClick={onEdit}
+          className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        >
+          <Pencil className="w-4 h-4" /> Editar
+        </button>
+        <button
+          onClick={onDelete}
+          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+        >
+          <Trash className="w-4 h-4" /> Excluir
+        </button>
+        <button
+          onClick={onToggleHistory}
+          className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+          Histórico
+        </button>
       </div>
 
       {showHistory && (
