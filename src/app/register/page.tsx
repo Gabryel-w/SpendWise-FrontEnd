@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/header";
 import Footer from "@/components/Footer";
 import { Mail, Lock, User } from "lucide-react";
+import { useEffect } from "react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -14,10 +15,20 @@ export default function RegisterPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user.id) {
+        router.push("/dashboard");
+      }
+    }
+  }, [router]);
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(""); 
+    setErrorMessage("");
     setSuccessMessage("");
 
     try {
@@ -30,7 +41,7 @@ export default function RegisterPage() {
       if (!response.ok) throw new Error("Erro ao cadastrar usuário. Tente novamente.");
 
       setSuccessMessage("Cadastro realizado com sucesso! Redirecionando para o login...");
-      
+
       setTimeout(() => router.push("/login"), 1000);
     } catch (error: any) {
       setErrorMessage(error.message);
@@ -62,7 +73,7 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleRegister} className="space-y-4">
-         
+
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -102,11 +113,10 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${
-                loading
+              className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${loading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
-              }`}
+                }`}
             >
               {loading ? "Cadastrando..." : "Cadastrar"}
             </button>
