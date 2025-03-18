@@ -33,7 +33,7 @@ export default function GoalContributionModal({
     }
 
     try {
-      const response = await fetch("http://localhost:5000/goal-contributions", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goal-contributions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ goal_id: goalId, amount: parsedAmount }),

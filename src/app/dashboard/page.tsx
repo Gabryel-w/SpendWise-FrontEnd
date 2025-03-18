@@ -39,7 +39,6 @@ export default function DashboardPage() {
 
   const router = useRouter();
 
-  // Fetch inicial
   const fetchTransactions = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -48,7 +47,7 @@ export default function DashboardPage() {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/transactions?user_id=${user.id}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions?user_id=${user.id}`);
       const data = await response.json();
       setTransactions(data);
       setFilteredTransactions(data);
@@ -66,7 +65,6 @@ export default function DashboardPage() {
     fetchTransactions();
   }, [router]);
 
-  // Filtros dinâmicos
   useEffect(() => {
     let filtered = transactions.filter((transaction) =>
       transaction.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -90,7 +88,7 @@ export default function DashboardPage() {
     if (!editingTransaction) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/transactions/${editingTransaction.id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions/${editingTransaction.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
@@ -112,7 +110,7 @@ export default function DashboardPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/transactions/${id}`, { method: "DELETE" });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Erro ao deletar transação.");
 
       setTransactions((prev) => prev.filter((t) => t.id !== id));
@@ -127,13 +125,11 @@ export default function DashboardPage() {
     }
   };
 
-  // Adicionar nova transação
   const handleAddTransaction = (newTransaction: Transaction) => {
     setTransactions((prev) => [newTransaction, ...prev]);
     fetchTransactions();
   };
 
-  // Paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const currentTransactions = filteredTransactions.slice(indexOfLastItem - itemsPerPage, indexOfLastItem);
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
@@ -141,7 +137,6 @@ export default function DashboardPage() {
   const handleNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
   const handlePreviousPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
 
-  // ⚠️ Aqui está a função que faltava:
   const handleGoToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);

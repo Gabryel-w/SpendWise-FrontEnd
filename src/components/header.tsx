@@ -23,7 +23,7 @@ export default function Header() {
       const storedUser = JSON.parse(localStorage.getItem("user") || "null");
       if (storedUser) {
         try {
-          const response = await fetch(`http://localhost:5000/user-by-email?email=${storedUser.email}`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user-by-email?email=${storedUser.email}`);
           if (!response.ok) throw new Error("Erro ao buscar usuário");
           const userData = await response.json();
           setUser(userData);
@@ -62,9 +62,8 @@ export default function Header() {
           )}
         </div>
 
-        {/* Ações lado direito */}
         <div className="hidden md:flex items-center gap-4">
-          <DarkModeToggle /> {/* Agora fora do submenu, sempre visível */}
+          <DarkModeToggle /> 
 
           {user ? (
             <div className="relative">

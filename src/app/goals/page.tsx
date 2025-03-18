@@ -8,7 +8,7 @@ import GoalContributionModal from "@/components/GoalContributionModal";
 import GoalContributionHistory from "@/components/GoalContributionHistory";
 import Header from "@/components/header";
 import Footer from "@/components/Footer";
-import PopUpConfirmDialog from "@/components/PopUpConfirmDialog"; // Import the PopUpConfirmDialog component
+import PopUpConfirmDialog from "@/components/PopUpConfirmDialog";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -35,13 +35,13 @@ export default function GoalsPage() {
   const [contributingGoalId, setContributingGoalId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState<{ [key: string]: boolean }>({});
   const [historyRefreshCounter, setHistoryRefreshCounter] = useState(0);
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false); // State for confirmation dialog
-  const [goalToDelete, setGoalToDelete] = useState<string | null>(null); // State to store the goal to be deleted
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false); 
+  const [goalToDelete, setGoalToDelete] = useState<string | null>(null); 
 
   const fetchGoals = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const res = await fetch(`http://localhost:5000/goals?user_id=${user.id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals?user_id=${user.id}`);
       const data = await res.json();
       setGoals(data);
     } catch (error) {
@@ -52,7 +52,7 @@ export default function GoalsPage() {
   };
 
   const handleDeleteGoal = async (id: string) => {
-    await fetch(`http://localhost:5000/goals/${id}`, { method: "DELETE" });
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${id}`, { method: "DELETE" });
     fetchGoals();
   };
 
@@ -104,7 +104,7 @@ export default function GoalsPage() {
                     key={goal.id}
                     goal={goal}
                     onEdit={() => setEditingGoal(goal)}
-                    onDelete={() => handleConfirmDelete(goal.id)} // Use handleConfirmDelete instead of handleDeleteGoal
+                    onDelete={() => handleConfirmDelete(goal.id)}
                     onContribute={() => setContributingGoalId(goal.id)}
                     onToggleHistory={() =>
                       setShowHistory((prev) => ({

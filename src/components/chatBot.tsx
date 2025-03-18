@@ -11,33 +11,33 @@ export default function Chatbot() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
-    const [user, setUser] = useState<{ id: string } | null>(null); // Estado para armazenar o usuário
+    const [user, setUser] = useState<{ id: string } | null>(null); 
 
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         if (userData && userData.id) {
-            setUser(userData); // Atualiza o estado com os dados do usuário
+            setUser(userData); 
         }
-    }, []); // Executa apenas uma vez ao montar o componente
+    }, []); 
 
     const sendMessage = async (message?: string) => {
         const messageToSend = message || input.trim();
-        if (!messageToSend || !user?.id) return; // Verifica se o user.id existe
+        if (!messageToSend || !user?.id) return; 
 
         const newMessages: Message[] = [...messages, { sender: "user", text: messageToSend }];
         setMessages(newMessages);
         setInput("");
 
         try {
-            const response = await fetch("http://localhost:5000/api/chat", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: messageToSend, user_id: user.id }) // Passa o user_id corretamente
+                body: JSON.stringify({ message: messageToSend, user_id: user.id }) 
             });
 
             const data = await response.json();
             setMessages([...newMessages, { sender: "bot", text: data.reply }]);
-            setSuggestedQuestions(data.suggestedQuestions || []); // Atualiza as perguntas sugeridas
+            setSuggestedQuestions(data.suggestedQuestions || []);
         } catch (error) {
             console.error("Erro ao enviar mensagem:", error);
         }

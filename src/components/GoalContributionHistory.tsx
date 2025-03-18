@@ -20,7 +20,7 @@ export default function GoalContributionHistory({ goalId, refreshTrigger }: Goal
 
     const fetchContributions = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/goal-contributions/by-goal?goal_id=${goalId}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goal-contributions/by-goal?goal_id=${goalId}`);
             const data = await res.json();
 
             setContributions(Array.isArray(data) ? data : []);

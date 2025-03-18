@@ -38,7 +38,7 @@ export default function GraphsPage() {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:5000/transactions?user_id=${user.id}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions?user_id=${user.id}`);
                 const data = await response.json();
                 setTransactions(data);
             } catch (error) {
@@ -83,12 +83,9 @@ export default function GraphsPage() {
                     Painel Financeiro <span className="text-blue-600 dark:text-blue-400">Interativo</span>
                 </h1>
 
-                {/* Cards de Resumo */}
                 <BalanceInfo />
 
-                {/* Gráficos */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Gráfico de Distribuição de Gastos */}
                     <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
                         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Distribuição de Gastos</h2>
                         <ResponsiveContainer width="100%" height={300}>
@@ -103,7 +100,6 @@ export default function GraphsPage() {
                         </ResponsiveContainer>
                     </div>
 
-                    {/* Gráfico de Receitas vs Despesas */}
                     <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
                         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Receitas vs Despesas</h2>
                         <ResponsiveContainer width="100%" height={300}>
@@ -118,9 +114,7 @@ export default function GraphsPage() {
                     </div>
                 </div>
 
-                {/* Gráficos Adicionais */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    {/* Gráfico de Evolução do Saldo */}
                     <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
                         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Evolução do Saldo</h2>
                         <ResponsiveContainer width="100%" height={300}>
@@ -133,7 +127,6 @@ export default function GraphsPage() {
                         </ResponsiveContainer>
                     </div>
 
-                    {/* Gráfico de Gastos Acumulados */}
                     <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
                         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Gastos Acumulados</h2>
                         <ResponsiveContainer width="100%" height={300}>
@@ -147,7 +140,6 @@ export default function GraphsPage() {
                     </div>
                 </div>
 
-                {/* Botão de Exportação Centralizado e Estilizado */}
                 <div className="flex justify-center items-center mt-6">
                     <ExportToCSV
                         data={transactions}

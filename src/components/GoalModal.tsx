@@ -24,7 +24,7 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-      const response = await fetch("http://localhost:5000/goals", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -59,13 +59,13 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Nova Meta</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Nova Meta</h2>
 
         {error && <p className="text-red-500 mb-3">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-800">Título da Meta</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">Título da Meta</label>
             <input
               type="text"
               value={title}
@@ -76,7 +76,7 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-800">Valor Alvo (R$)</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">Valor Alvo (R$)</label>
             <input
               type="number"
               value={goalAmount}
@@ -87,7 +87,7 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-800">Data Limite</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200">Data Limite</label>
             <input
               type="date"
               value={deadline}
@@ -100,7 +100,7 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition dark:text-gray-200"
           >
             {loading ? "Salvando..." : "Criar Meta"}
           </button>

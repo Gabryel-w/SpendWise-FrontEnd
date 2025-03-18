@@ -17,11 +17,11 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(""); // Limpa mensagens anteriores
+    setErrorMessage(""); 
     setSuccessMessage("");
 
     try {
-      const response = await fetch("http://localhost:5000/register", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
@@ -31,8 +31,7 @@ export default function RegisterPage() {
 
       setSuccessMessage("Cadastro realizado com sucesso! Redirecionando para o login...");
       
-      // Aguarda um pouco para o usuário visualizar a mensagem antes de redirecionar
-      setTimeout(() => router.push("/login"), 1500);
+      setTimeout(() => router.push("/login"), 1000);
     } catch (error: any) {
       setErrorMessage(error.message);
     } finally {
@@ -50,14 +49,12 @@ export default function RegisterPage() {
             Crie sua conta
           </h1>
 
-          {/* Mensagem de erro */}
           {errorMessage && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {errorMessage}
             </div>
           )}
 
-          {/* Mensagem de sucesso */}
           {successMessage && (
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
               {successMessage}
@@ -65,7 +62,7 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleRegister} className="space-y-4">
-            {/* Campo Nome */}
+         
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -78,7 +75,6 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Campo Email */}
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -91,7 +87,6 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Campo Senha */}
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -104,7 +99,6 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Botão Cadastrar */}
             <button
               type="submit"
               disabled={loading}
@@ -118,7 +112,6 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          {/* Link para Login */}
           <p className="text-center text-sm mt-6 text-gray-700">
             Já tem uma conta?{" "}
             <a

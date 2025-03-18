@@ -40,7 +40,7 @@ export default function NewTransactionModal({ onClose, onSuccess }: NewTransacti
                 user_id: user.id,
             };
 
-            const response = await fetch("http://localhost:5000/transactions", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(transactionData),

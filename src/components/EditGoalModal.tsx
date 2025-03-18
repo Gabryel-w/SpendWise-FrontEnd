@@ -26,7 +26,7 @@ export default function EditGoalModal({ goal, onClose, onGoalUpdated }: EditGoal
         e.preventDefault();
         setLoading(true);
 
-        await fetch(`http://localhost:5000/goals/${goal.id}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goal.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

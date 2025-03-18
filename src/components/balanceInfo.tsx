@@ -20,7 +20,7 @@ export default function BalanceInfo() {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       if (!user?.id) return;
 
-      const response = await fetch(`http://localhost:5000/transactions?user_id=${user.id}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions?user_id=${user.id}`);
       const data = await response.json();
       setTransactions(data);
       setIsUpdating(false);
@@ -32,9 +32,7 @@ export default function BalanceInfo() {
   useEffect(() => {
     fetchTransactions();
 
-    const ws = new WebSocket("ws://localhost:5000");
-
-    ws.onopen = () => console.log("WebSocket conectado!");
+    const ws = new WebSocket(`ws://${process.env.NEXT_PUBLIC_API_URL}`);
 
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
@@ -60,7 +58,7 @@ export default function BalanceInfo() {
       animate={{ opacity: isUpdating ? 0.5 : 1, scale: isUpdating ? 0.98 : 1 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Card Saldo Atual */}
+
       <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 flex items-center gap-4 dark:bg-gray-900 dark:border-gray-700">
         <Wallet className="w-10 h-10 text-blue-600 dark:text-blue-400" />
         <div>
@@ -71,7 +69,7 @@ export default function BalanceInfo() {
         </div>
       </div>
 
-      {/* Card Receitas */}
+
       <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 flex items-center gap-4 dark:bg-gray-900 dark:border-gray-700">
         <ArrowUpRight className="w-10 h-10 text-green-600 dark:text-green-400" />
         <div>
@@ -82,7 +80,7 @@ export default function BalanceInfo() {
         </div>
       </div>
 
-      {/* Card Despesas */}
+
       <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 flex items-center gap-4 dark:bg-gray-900 dark:border-gray-700">
         <ArrowDownRight className="w-10 h-10 text-red-600 dark:text-red-400" />
         <div>
@@ -93,7 +91,6 @@ export default function BalanceInfo() {
         </div>
       </div>
 
-      {/* Card Saldo Médio */}
       <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 flex items-center gap-4 dark:bg-gray-900 dark:border-gray-700">
         <DollarSign className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
         <div>
