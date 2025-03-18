@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Target, Trash, Pencil, PiggyBank } from "lucide-react";
+import { Plus, Target, Trash, Pencil, PiggyBank, UserPlus } from "lucide-react";
 import GoalModal from "@/components/GoalModal";
 import EditGoalModal from "@/components/EditGoalModal";
 import GoalContributionModal from "@/components/GoalContributionModal";
@@ -9,6 +9,8 @@ import GoalContributionHistory from "@/components/GoalContributionHistory";
 import Header from "@/components/header";
 import Footer from "@/components/Footer";
 import PopUpConfirmDialog from "@/components/PopUpConfirmDialog";
+import AddCollaboratorModal from "@/components/AddCollaboratorModal";
+import ManageCollaborators from "@/components/ManageCollaborators";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -37,15 +39,23 @@ export default function GoalsPage() {
   const [historyRefreshCounter, setHistoryRefreshCounter] = useState(0);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false); 
   const [goalToDelete, setGoalToDelete] = useState<string | null>(null); 
+  const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
+  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
 
   const fetchGoals = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals?user_id=${user.id}`);
       const data = await res.json();
+  
+      if (res.status !== 200) {
+        throw new Error(data.error || "Erro ao buscar metas");
+      }
+    
       setGoals(data);
     } catch (error) {
       console.error("Erro ao buscar metas:", error);
+      setGoals([]); 
     } finally {
       setLoading(false);
     }
@@ -114,6 +124,10 @@ export default function GoalsPage() {
                     }
                     showHistory={showHistory[goal.id]}
                     historyRefreshCounter={historyRefreshCounter}
+                    onManageCollaborators={() => {
+                      setSelectedGoalId(goal.id);
+                      setIsCollaboratorModalOpen(true);
+                    }}
                   />
                 ))}
               </div>
@@ -147,6 +161,14 @@ export default function GoalsPage() {
           }}
           onCancel={() => setIsConfirmDialogOpen(false)}
         />
+        {selectedGoalId && (
+          <AddCollaboratorModal
+            isOpen={isCollaboratorModalOpen}
+            onClose={() => setIsCollaboratorModalOpen(false)}
+            goalId={selectedGoalId}
+            onCollaboratorAdded={fetchGoals}
+          />
+        )}
       </div>
       <Footer />
     </>
@@ -161,6 +183,7 @@ function SortableGoalCard({
   onToggleHistory,
   showHistory,
   historyRefreshCounter,
+  onManageCollaborators,
 }: {
   goal: Goal;
   onEdit: () => void;
@@ -169,6 +192,7 @@ function SortableGoalCard({
   onToggleHistory: () => void;
   showHistory: boolean;
   historyRefreshCounter: number;
+  onManageCollaborators: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: goal.id });
 
@@ -248,6 +272,12 @@ function SortableGoalCard({
           className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
         >
           Histórico
+        </button>
+        <button
+          onClick={onManageCollaborators}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <UserPlus className="w-4 h-4" /> Colaboradores
         </button>
       </div>
 
