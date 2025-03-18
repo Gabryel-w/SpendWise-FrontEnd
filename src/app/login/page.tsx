@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
-import ImageCarousel from "@/components/ImageCarousel";
 import Footer from "@/components/Footer";
 import { Mail, Lock } from "lucide-react";
 
@@ -47,10 +46,6 @@ export default function LoginPage() {
       <Header />
 
       <div className="flex flex-col md:flex-row h-screen bg-white md:bg-gray-100">
-
-        <div className="hidden md:block md:w-1/2">
-          <ImageCarousel />
-        </div>
 
         <div className="w-full md:w-1/2 flex items-center justify-center bg-white">
           <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">

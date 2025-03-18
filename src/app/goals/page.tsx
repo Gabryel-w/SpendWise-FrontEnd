@@ -209,11 +209,13 @@ function SortableGoalCard({
         <p className="text-sm text-gray-500 dark:text-gray-400">Prazo: {new Date(goal.deadline).toLocaleDateString()}</p>
       </div>
 
-      <div className={`w-full h-4 rounded-full overflow-hidden ${isCompleted ? "bg-emerald-200 dark:bg-emerald-800" : "bg-gray-200 dark:bg-gray-700"}`}>
+      <div className={`w-full h-4 rounded-full overflow-hidden relative ${isCompleted ? "bg-emerald-200 dark:bg-emerald-800" : "bg-gray-200 dark:bg-gray-700"}`}>
         <div
-          className={`h-4 rounded-full transition-all duration-500 ${isCompleted ? "bg-gradient-to-r from-green-400 to-emerald-600" : "bg-green-500"}`}
+          className={`h-4 rounded-full transition-all duration-500 flex items-center justify-center ${isCompleted ? "bg-gradient-to-r from-green-400 to-emerald-600" : "bg-green-500"}`}
           style={{ width: `${Math.min((goal.saved_amount / goal.goal_amount) * 100, 100)}%` }}
-        ></div>
+        >
+          <span className="text-xs text-white">{`${Math.min((goal.saved_amount / goal.goal_amount) * 100, 100).toFixed(2)}%`}</span>
+        </div>
       </div>
 
       <p className={`text-sm ${isCompleted ? "text-emerald-700 dark:text-emerald-300 font-semibold" : "text-gray-600 dark:text-gray-300"}`}>
