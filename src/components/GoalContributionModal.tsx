@@ -33,10 +33,12 @@ export default function GoalContributionModal({
     }
 
     try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const userId = user?.id;
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goal-contributions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ goal_id: goalId, amount: parsedAmount }),
+        body: JSON.stringify({ goal_id: goalId, user_id: userId, amount: parsedAmount }),
       });
 
       if (!response.ok) {
@@ -44,11 +46,10 @@ export default function GoalContributionModal({
         throw new Error(errorData.error || "Erro ao adicionar contribuição");
       }
 
-      // Resetar o input
       setAmount("");
-      // Atualizar lista de contribuições
+
       onContributionAdded();
-      // Fechar modal
+
       onClose();
     } catch (err: any) {
       setError(err.message);
@@ -91,9 +92,8 @@ export default function GoalContributionModal({
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg text-white transition ${
-              loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
-            }`}
+            className={`w-full py-3 rounded-lg text-white transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+              }`}
           >
             {loading ? "Salvando..." : "Adicionar Contribuição"}
           </button>

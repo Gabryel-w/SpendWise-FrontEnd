@@ -10,7 +10,6 @@ import Header from "@/components/header";
 import Footer from "@/components/Footer";
 import PopUpConfirmDialog from "@/components/PopUpConfirmDialog";
 import AddCollaboratorModal from "@/components/AddCollaboratorModal";
-import ManageCollaborators from "@/components/ManageCollaborators";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -20,6 +19,12 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+interface Collaborator {
+  id: string;
+  name: string;
+  email: string;
+}
+
 interface Goal {
   id: string;
   user_id: string;
@@ -27,6 +32,7 @@ interface Goal {
   goal_amount: number;
   saved_amount: number;
   deadline: string;
+  collaborators: Collaborator[];
 }
 
 export default function GoalsPage() {
@@ -52,7 +58,25 @@ export default function GoalsPage() {
         throw new Error(data.error || "Erro ao buscar metas");
       }
     
-      setGoals(data);
+      const goalsWithCollaborators = await Promise.all(
+        data.map(async (goal: Goal) => {
+          try {
+            const collaboratorsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goal.id}/collaborators`, {
+              mode: 'cors'
+            });
+            if (!collaboratorsRes.ok) {
+              throw new Error("Collaborators not found");
+            }
+            const collaborators = await collaboratorsRes.json();
+            return { ...goal, collaborators };
+          } catch (error) {
+            console.error(`Erro ao buscar colaboradores para a meta ${goal.id}:`, error);
+            return { ...goal, collaborators: [] };
+          }
+        })
+      );
+
+      setGoals(goalsWithCollaborators);
     } catch (error) {
       console.error("Erro ao buscar metas:", error);
       setGoals([]); 
@@ -135,7 +159,6 @@ export default function GoalsPage() {
           </DndContext>
         )}
 
-        {/* Modais */}
         <GoalModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onGoalCreated={fetchGoals} />
         {editingGoal && <EditGoalModal goal={editingGoal} onClose={() => setEditingGoal(null)} onGoalUpdated={fetchGoals} />}
         {contributingGoalId && (

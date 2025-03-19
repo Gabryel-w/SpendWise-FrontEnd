@@ -7,6 +7,8 @@ interface Contribution {
     goal_id: string;
     amount: number;
     contributed_at: string;
+    user_id: string;
+    users: { name: string } | null;
 }
 
 interface GoalContributionHistoryProps {
@@ -21,9 +23,11 @@ export default function GoalContributionHistory({ goalId, refreshTrigger }: Goal
     const fetchContributions = async () => {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goal-contributions/by-goal?goal_id=${goalId}`);
-            const data = await res.json();
-
-            setContributions(Array.isArray(data) ? data : []);
+            if (!res.ok) {
+                throw new Error("Contributions not found");
+            }
+            const data: Contribution[] = await res.json();
+            setContributions(data);
         } catch (error) {
             console.error("Erro ao buscar contribuições:", error);
         } finally {
@@ -50,7 +54,7 @@ export default function GoalContributionHistory({ goalId, refreshTrigger }: Goal
                                 {parseFloat(contribution.amount.toString()).toLocaleString("pt-BR", {
                                     style: "currency",
                                     currency: "BRL",
-                                })}
+                                })} - {contribution.users?.name || "Usuário desconhecido"}
                             </span>
                             <span className="text-sm text-gray-800 dark:text-gray-400">
                                 {new Date(contribution.contributed_at).toLocaleDateString()}
