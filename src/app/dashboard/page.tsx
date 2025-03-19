@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Header from "@/components/header";
@@ -26,7 +26,6 @@ interface Transaction {
 export default function DashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
-  const [balance, setBalance] = useState(0);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [editForm, setEditForm] = useState({ description: "", type: "income", amount: 0, category: "", date: "" });
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,7 +38,7 @@ export default function DashboardPage() {
 
   const router = useRouter();
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       if (!user?.id) {
@@ -51,19 +50,26 @@ export default function DashboardPage() {
       const data = await response.json();
       setTransactions(data);
       setFilteredTransactions(data);
-
-      const total = data.reduce((acc: number, transaction: Transaction) => {
-        return transaction.type === "income" ? acc + transaction.amount : acc - transaction.amount;
-      }, 0);
-      setBalance(total);
     } catch (error) {
       console.error("Erro ao buscar transações", error);
     }
-  };
+  }, [router]);
 
   useEffect(() => {
     fetchTransactions();
-  }, [router]);
+
+    const ws = new WebSocket(`ws://${process.env.NEXT_PUBLIC_API_URL}`);
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log("WebSocket recebeu:", message);
+
+      if (message.type === "update") {
+        fetchTransactions();
+      }
+    };
+
+    return () => ws.close();
+  }, [fetchTransactions]);
 
   useEffect(() => {
     let filtered = transactions.filter((transaction) =>
@@ -78,7 +84,6 @@ export default function DashboardPage() {
     setCurrentPage(1);
   }, [searchTerm, filterType, filterCategory, filterDate, transactions]);
 
-  // Ações
   const handleEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
     setEditForm(transaction);
@@ -114,28 +119,31 @@ export default function DashboardPage() {
       if (!response.ok) throw new Error("Erro ao deletar transação.");
 
       setTransactions((prev) => prev.filter((t) => t.id !== id));
-      const deletedTransaction = transactions.find((t) => t.id === id);
-      if (deletedTransaction) {
-        setBalance((prev) =>
-          deletedTransaction.type === "income" ? prev - deletedTransaction.amount : prev + deletedTransaction.amount
-        );
-      }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleAddTransaction = (newTransaction: Transaction) => {
-    setTransactions((prev) => [newTransaction, ...prev]);
+  const handleAddTransaction = () => {
     fetchTransactions();
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
-  const currentTransactions = filteredTransactions.slice(indexOfLastItem - itemsPerPage, indexOfLastItem);
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentTransactions = filteredTransactions.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
 
-  const handleNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
-  const handlePreviousPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   const handleGoToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -147,42 +155,28 @@ export default function DashboardPage() {
     <>
       <Header />
       <main className="p-4 sm:p-8 bg-gray-100 dark:bg-gray-900 min-h-screen space-y-6">
+        <BalanceInfo transactions={transactions} />
 
-        <BalanceInfo />
+        <motion.div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 space-y-6">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+          >
+            <Plus />
+          </button>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 space-y-6"
-        >
-
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <button
-              title="Adicionar Nova Transação"
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition"
-            >
-              <Plus className="w-5 h-5" />
-            </button>
-
-            <Filters
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              filterType={filterType}
-              setFilterType={setFilterType}
-              filterCategory={filterCategory}
-              setFilterCategory={setFilterCategory}
-              filterDate={filterDate}
-              setFilterDate={setFilterDate}
-            />
-          </div>
-
-          <TransactionTable
-            transactions={currentTransactions}
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
+          <Filters
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            filterType={filterType}
+            setFilterType={setFilterType}
+            filterCategory={filterCategory}
+            setFilterCategory={setFilterCategory}
+            filterDate={filterDate}
+            setFilterDate={setFilterDate}
           />
+
+          <TransactionTable transactions={currentTransactions} handleEdit={handleEdit} handleDelete={handleDelete} />
 
           <Pagination
             currentPage={currentPage}
@@ -193,21 +187,8 @@ export default function DashboardPage() {
           />
         </motion.div>
 
-        {editingTransaction && (
-          <EditTransactionModal
-            editForm={editForm}
-            setEditForm={setEditForm}
-            setEditingTransaction={setEditingTransaction}
-            handleUpdate={handleUpdate}
-          />
-        )}
-
-        {showAddModal && (
-          <NewTransactionModal
-            onClose={() => setShowAddModal(false)}
-            onSuccess={handleAddTransaction}
-          />
-        )}
+        {editingTransaction && <EditTransactionModal editForm={editForm} setEditForm={setEditForm} handleUpdate={handleUpdate} setEditingTransaction={setEditingTransaction} />}
+        {showAddModal && <NewTransactionModal onClose={() => setShowAddModal(false)} onSuccess={handleAddTransaction} />}
       </main>
 
       <Chatbot />

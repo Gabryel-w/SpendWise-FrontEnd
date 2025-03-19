@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, AreaChart, Area, ResponsiveContainer } from "recharts";
 import Header from "@/components/header";
 import { useRouter } from "next/navigation";
 import BalanceInfo from "@/components/balanceInfo";
@@ -46,33 +46,30 @@ export default function GraphsPage() {
             }
         };
         fetchTransactions();
-    }, []);
+    }, [router]);
 
-    const categories = Array.from(new Set(transactions.map(t => t.category)));
-    const categoryData = categories.map(category => ({
+    const categories = Array.from(new Set(transactions.map((t) => t.category)));
+    const categoryData = categories.map((category) => ({
         name: category,
-        value: transactions.filter(t => t.category === category).reduce((acc, t) => acc + t.amount, 0)
+        value: transactions.filter((t) => t.category === category).reduce((acc, t) => acc + t.amount, 0),
     }));
 
-    const incomeExpensesData = transactions.reduce((acc, t) => {
+    const incomeExpensesData = transactions.reduce<{ date: string; income: number; expense: number }[]>((acc, t) => {
         const date = t.date;
-        const existing = acc.find(item => item.date === date);
+        const existing = acc.find((item) => item.date === date);
         if (existing) {
             existing[t.type] += t.amount;
         } else {
             acc.push({ date, income: t.type === "income" ? t.amount : 0, expense: t.type === "expense" ? t.amount : 0 });
         }
         return acc;
-    }, [] as { date: string; income: number; expense: number }[]);
-
-    const balanceData: BalanceData[] = [];
-
-    for (let i = 0; i < incomeExpensesData.length; i++) {
-        const item = incomeExpensesData[i];
-        const previousBalance = i === 0 ? 0 : balanceData[i - 1].balance;
-        const currentBalance = previousBalance + item.income - item.expense;
-        balanceData.push({ date: item.date, balance: currentBalance });
-    }
+    }, []);
+    
+    const balanceData: BalanceData[] = incomeExpensesData.reduce<BalanceData[]>((acc, item, index) => {
+        const previousBalance = index === 0 ? 0 : acc[index - 1].balance;
+        acc.push({ date: item.date, balance: previousBalance + item.income - item.expense });
+        return acc;
+    }, []);
 
     return (
         <>
@@ -83,7 +80,7 @@ export default function GraphsPage() {
                     Painel Financeiro <span className="text-blue-600 dark:text-blue-400">Interativo</span>
                 </h1>
 
-                <BalanceInfo />
+                <BalanceInfo transactions={transactions} />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded-xl shadow-md dark:bg-gray-800 dark:text-white">
