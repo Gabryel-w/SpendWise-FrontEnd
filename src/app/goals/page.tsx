@@ -36,8 +36,8 @@ export default function GoalsPage() {
   const [contributingGoalId, setContributingGoalId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState<{ [key: string]: boolean }>({});
   const [historyRefreshCounter, setHistoryRefreshCounter] = useState(0);
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false); 
-  const [goalToDelete, setGoalToDelete] = useState<string | null>(null); 
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [goalToDelete, setGoalToDelete] = useState<string | null>(null);
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
   const [isCollaboratorsListModalOpen, setIsCollaboratorsListModalOpen] = useState(false);
@@ -48,16 +48,16 @@ export default function GoalsPage() {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals?user_id=${user.id}`);
       const data = await res.json();
-  
+
       if (res.status !== 200) {
         throw new Error(data.error || "Erro ao buscar metas");
       }
-    
+
       const goalsWithCollaborators = await Promise.all(
         data.map(async (goal: Goal) => {
           try {
             const collaboratorsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goal.id}/collaborators`);
-            
+
             if (!collaboratorsRes.ok) {
               throw new Error("Collaborators not found");
             }
@@ -73,7 +73,7 @@ export default function GoalsPage() {
       setGoals(goalsWithCollaborators);
     } catch (error) {
       console.error("Erro ao buscar metas:", error);
-      setGoals([]); 
+      setGoals([]);
     } finally {
       setLoading(false);
     }
@@ -97,16 +97,20 @@ export default function GoalsPage() {
     <>
       <Header />
       <div className="p-4 bg-gray-100 dark:bg-gray-900 min-h-screen">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-gray-800 dark:text-white">
-            <Target className="w-8 h-8" />
+        <div className="flex justify-between items-center mb-8">
+          {/* Título com gradiente e ícone */}
+          <h1 className="text-4xl font-extrabold flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400">
+            <Target className="w-10 h-10 text-blue-600 dark:text-blue-400" />
             Minhas Metas
           </h1>
+
+          {/* Botão de adicionar nova meta */}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95"
           >
-            <Plus /> Nova Meta
+            <Plus className="w-5 h-5" />
+            <span className="font-semibold">Nova Meta</span>
           </button>
         </div>
 
@@ -215,9 +219,9 @@ function GoalCard({
 
   return (
     <div
-      className={`relative p-6 border-4 border-blue-500 rounded-2xl shadow-lg space-y-3 transition-all duration-300 ${isCompleted
-        ? "border-4 border-emerald-500 bg-gradient-to-r from-green-50 to-white dark:from-green-900 dark:to-gray-800"
-        : "bg-white dark:bg-gray-800"
+      className={`relative p-6 rounded-2xl shadow-xl space-y-4 transition-all duration-300 ${isCompleted
+          ? "border-2 border-emerald-500 bg-gradient-to-r from-green-50 to-white dark:from-green-900 dark:to-gray-800"
+          : "border-2 border-blue-200 bg-white dark:bg-gray-800"
         }`}
     >
       {isCompleted && (
@@ -226,64 +230,79 @@ function GoalCard({
         </div>
       )}
 
-      <div className="flex justify-between items-center">
-        <h2 className={`text-xl font-semibold ${isCompleted ? "text-emerald-700 dark:text-emerald-300" : "text-gray-800 dark:text-white"}`}>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+        <h2 className={`text-xl font-semibold ${isCompleted ? "text-emerald-700 dark:text-emerald-300" : "text-gray-800 dark:text-white"
+          }`}>
           {goal.title}
         </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Prazo: {new Date(goal.deadline).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 md:mt-0">
+          Prazo: {new Date(goal.deadline).toLocaleDateString()}
+        </p>
       </div>
 
-      <div className={`w-full h-4 rounded-full overflow-hidden relative ${isCompleted ? "bg-emerald-200 dark:bg-emerald-800" : "bg-gray-200 dark:bg-gray-700"}`}>
+      <div className={`w-full h-4 rounded-full overflow-hidden relative ${isCompleted ? "bg-emerald-200 dark:bg-emerald-800" : "bg-gray-100 dark:bg-gray-700"
+        }`}>
         <div
-          className={`h-4 rounded-full transition-all duration-500 flex items-center justify-center ${isCompleted ? "bg-gradient-to-r from-green-400 to-emerald-600" : "bg-green-500"}`}
+          className={`h-4 rounded-full transition-all duration-500 flex items-center justify-center ${isCompleted ? "bg-gradient-to-r from-green-400 to-emerald-600" : "bg-blue-500"
+            }`}
           style={{ width: `${Math.min((goal.saved_amount / goal.goal_amount) * 100, 100)}%` }}
         >
           <span className="text-xs text-white">{`${Math.min((goal.saved_amount / goal.goal_amount) * 100, 100).toFixed(2)}%`}</span>
         </div>
       </div>
 
-      <p className={`text-sm ${isCompleted ? "text-emerald-700 dark:text-emerald-300 font-semibold" : "text-gray-600 dark:text-gray-300"}`}>
-        {goal.saved_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} de {goal.goal_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+      <p className={`text-sm ${isCompleted ? "text-emerald-700 dark:text-emerald-300 font-semibold" : "text-gray-700 dark:text-gray-300"
+        }`}>
+        {goal.saved_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} de{" "}
+        {goal.goal_amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
       </p>
 
       <div className="flex justify-end gap-2 flex-wrap">
         {!isCompleted && (
           <button
             onClick={onContribute}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+            title="Contribuir"
           >
-            <PiggyBank className="w-4 h-4" /> Contribuir
+            <PiggyBank className="w-5 h-5" />
           </button>
         )}
         <button
           onClick={onEdit}
-          className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          title="Editar"
         >
-          <Pencil className="w-4 h-4" /> Editar
+          <Pencil className="w-5 h-5" />
         </button>
         <button
           onClick={onDelete}
-          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+          title="Excluir"
         >
-          <Trash className="w-4 h-4" /> Excluir
+          <Trash className="w-5 h-5" />
         </button>
         <button
           onClick={onToggleHistory}
-          className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+          className="p-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+          title="Histórico"
         >
-          Histórico
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
         </button>
         <button
           onClick={onManageCollaborators}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          title="Adicionar Colaborador"
         >
-          <UserPlus className="w-4 h-4" /> Colaboradores
+          <UserPlus className="w-5 h-5" />
         </button>
         <button
           onClick={onViewCollaborators}
-          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+          title="Ver Colaboradores"
         >
-          <Users className="w-4 h-4" /> Ver Colaboradores
+          <Users className="w-5 h-5" />
         </button>
       </div>
 
