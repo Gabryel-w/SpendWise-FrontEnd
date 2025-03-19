@@ -1,12 +1,16 @@
 import React from "react";
 
-interface ExportToCSVProps {
-    data: Array<{ [key: string]: any }>; 
+interface ExportToCSVProps<T extends Record<string, unknown>> {
+    data: T[]; 
     filename: string; 
     className?: string; 
 }
 
-const ExportToCSV: React.FC<ExportToCSVProps> = ({ data, filename, className }) => {
+const ExportToCSV = <T extends Record<string, unknown>>({
+    data,
+    filename,
+    className
+}: ExportToCSVProps<T>) => {
     const exportToCSV = () => {
         if (data.length === 0) {
             alert("Nenhum dado disponível para exportação.");

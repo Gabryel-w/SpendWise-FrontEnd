@@ -48,7 +48,7 @@ export default function Testimonials() {
                 alt={testimonial.name}
                 className="w-20 h-20 rounded-full object-cover border-4 border-blue-500 mb-4"
               />
-              <p className="text-gray-700 dark:text-gray-300 italic mb-4">"{testimonial.feedback}"</p>
+              <p className="text-gray-700 dark:text-gray-300 italic mb-4">{testimonial.feedback}</p>
               <h4 className="text-lg font-semibold text-gray-800 dark:text-white">{testimonial.name}</h4>
               <span className="text-gray-500 dark:text-gray-400 text-sm">{testimonial.role}</span>
             </div>

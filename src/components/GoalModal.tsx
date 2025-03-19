@@ -43,8 +43,12 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
 
       onGoalCreated();
       onClose();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }

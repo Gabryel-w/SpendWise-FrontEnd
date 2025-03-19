@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 
 interface NewTransactionModalProps {
     onClose: () => void;
-    onSuccess: (newTransaction: any) => void;
+    onSuccess: (newTransaction: { id: string; description: string; type: string; amount: number; category: string; date: string; user_id: string }) => void;
 }
 
 export default function NewTransactionModal({ onClose, onSuccess }: NewTransactionModalProps) {

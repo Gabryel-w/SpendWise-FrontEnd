@@ -27,7 +27,14 @@ export default function DashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [editForm, setEditForm] = useState({ description: "", type: "income", amount: 0, category: "", date: "" });
+  const [editForm, setEditForm] = useState<Transaction>({
+    id: "",
+    description: "",
+    type: "income", 
+    amount: 0,
+    category: "",
+    date: "",
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
@@ -86,8 +93,16 @@ export default function DashboardPage() {
 
   const handleEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
-    setEditForm(transaction);
+    setEditForm({
+      id: transaction.id,
+      description: transaction.description,
+      type: transaction.type as "income" | "expense", 
+      amount: transaction.amount,
+      category: transaction.category,
+      date: transaction.date,
+    });
   };
+  
 
   const handleUpdate = async () => {
     if (!editingTransaction) return;
@@ -187,7 +202,14 @@ export default function DashboardPage() {
           />
         </motion.div>
 
-        {editingTransaction && <EditTransactionModal editForm={editForm} setEditForm={setEditForm} handleUpdate={handleUpdate} setEditingTransaction={setEditingTransaction} />}
+        {editingTransaction && (
+          <EditTransactionModal
+            editForm={editForm}
+            setEditForm={setEditForm}
+            handleUpdate={handleUpdate}
+            setEditingTransaction={setEditingTransaction}
+          />
+        )}
         {showAddModal && <NewTransactionModal onClose={() => setShowAddModal(false)} onSuccess={handleAddTransaction} />}
       </main>
 

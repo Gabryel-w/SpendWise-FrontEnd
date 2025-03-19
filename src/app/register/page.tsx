@@ -43,8 +43,12 @@ export default function RegisterPage() {
       setSuccessMessage("Cadastro realizado com sucesso! Redirecionando para o login...");
 
       setTimeout(() => router.push("/login"), 1000);
-    } catch (error: any) {
-      setErrorMessage(error.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }

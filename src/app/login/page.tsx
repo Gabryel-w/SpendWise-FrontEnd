@@ -43,8 +43,12 @@ export default function LoginPage() {
       setSuccessMessage("Login realizado com sucesso! Redirecionando...");
 
       setTimeout(() => router.push("/dashboard"), 1000);
-    } catch (error: any) {
-      setErrorMessage(error.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }

@@ -8,7 +8,7 @@ import BalanceInfo from "@/components/balanceInfo";
 import Footer from "@/components/Footer";
 import ExportToCSV from "@/components/ExportToCSV";
 
-interface Transaction {
+interface Transaction extends Record<string, unknown> {
     id: string;
     description: string;
     type: "income" | "expense";

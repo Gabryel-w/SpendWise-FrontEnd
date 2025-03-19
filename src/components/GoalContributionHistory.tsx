@@ -37,7 +37,7 @@ export default function GoalContributionHistory({ goalId, refreshTrigger }: Goal
 
     useEffect(() => {
         fetchContributions();
-    }, [goalId, refreshTrigger]);
+    }, [goalId, refreshTrigger, fetchContributions]);
 
     return (
         <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">

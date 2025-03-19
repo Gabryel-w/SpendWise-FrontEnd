@@ -40,8 +40,12 @@ export default function AddCollaboratorModal({
       setEmail("");
       onCollaboratorAdded();
       onClose();
-    } catch (err) {
-      setError("Não foi possível adicionar o colaborador.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Não foi possível adicionar o colaborador.");
+      }
     } finally {
       setLoading(false);
     }
