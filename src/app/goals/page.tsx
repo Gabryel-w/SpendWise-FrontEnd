@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Target, Trash, Pencil, PiggyBank, UserPlus } from "lucide-react";
+import { Plus, Target, Trash, Pencil, PiggyBank, UserPlus, Users } from "lucide-react";
 import GoalModal from "@/components/GoalModal";
 import EditGoalModal from "@/components/EditGoalModal";
 import GoalContributionModal from "@/components/GoalContributionModal";
@@ -10,14 +10,7 @@ import Header from "@/components/header";
 import Footer from "@/components/Footer";
 import PopUpConfirmDialog from "@/components/PopUpConfirmDialog";
 import AddCollaboratorModal from "@/components/AddCollaboratorModal";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import CollaboratorsListModal from "@/components/CollaboratorsListModal";
 
 interface Collaborator {
   id: string;
@@ -47,6 +40,8 @@ export default function GoalsPage() {
   const [goalToDelete, setGoalToDelete] = useState<string | null>(null); 
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
+  const [isCollaboratorsListModalOpen, setIsCollaboratorsListModalOpen] = useState(false);
+  const [selectedGoalForCollaborators, setSelectedGoalForCollaborators] = useState<string | null>(null);
 
   const fetchGoals = async () => {
     try {
@@ -61,9 +56,8 @@ export default function GoalsPage() {
       const goalsWithCollaborators = await Promise.all(
         data.map(async (goal: Goal) => {
           try {
-            const collaboratorsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goal.id}/collaborators`, {
-              mode: 'cors'
-            });
+            const collaboratorsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goal.id}/collaborators`);
+            
             if (!collaboratorsRes.ok) {
               throw new Error("Collaborators not found");
             }
@@ -95,15 +89,6 @@ export default function GoalsPage() {
     setIsConfirmDialogOpen(true);
   };
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (active.id !== over.id) {
-      const oldIndex = goals.findIndex((goal) => goal.id === active.id);
-      const newIndex = goals.findIndex((goal) => goal.id === over.id);
-      setGoals((goals) => arrayMove(goals, oldIndex, newIndex));
-    }
-  };
-
   useEffect(() => {
     fetchGoals();
   }, []);
@@ -130,33 +115,33 @@ export default function GoalsPage() {
         ) : goals.length === 0 ? (
           <p className="text-gray-500">Nenhuma meta cadastrada.</p>
         ) : (
-          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={goals.map((goal) => goal.id)} strategy={verticalListSortingStrategy}>
-              <div className="space-y-6">
-                {goals.map((goal) => (
-                  <SortableGoalCard
-                    key={goal.id}
-                    goal={goal}
-                    onEdit={() => setEditingGoal(goal)}
-                    onDelete={() => handleConfirmDelete(goal.id)}
-                    onContribute={() => setContributingGoalId(goal.id)}
-                    onToggleHistory={() =>
-                      setShowHistory((prev) => ({
-                        ...prev,
-                        [goal.id]: !prev[goal.id],
-                      }))
-                    }
-                    showHistory={showHistory[goal.id]}
-                    historyRefreshCounter={historyRefreshCounter}
-                    onManageCollaborators={() => {
-                      setSelectedGoalId(goal.id);
-                      setIsCollaboratorModalOpen(true);
-                    }}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
+          <div className="space-y-6">
+            {goals.map((goal) => (
+              <GoalCard
+                key={goal.id}
+                goal={goal}
+                onEdit={() => setEditingGoal(goal)}
+                onDelete={() => handleConfirmDelete(goal.id)}
+                onContribute={() => setContributingGoalId(goal.id)}
+                onToggleHistory={() =>
+                  setShowHistory((prev) => ({
+                    ...prev,
+                    [goal.id]: !prev[goal.id],
+                  }))
+                }
+                showHistory={showHistory[goal.id]}
+                historyRefreshCounter={historyRefreshCounter}
+                onManageCollaborators={() => {
+                  setSelectedGoalId(goal.id);
+                  setIsCollaboratorModalOpen(true);
+                }}
+                onViewCollaborators={() => {
+                  setSelectedGoalForCollaborators(goal.id);
+                  setIsCollaboratorsListModalOpen(true);
+                }}
+              />
+            ))}
+          </div>
         )}
 
         <GoalModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onGoalCreated={fetchGoals} />
@@ -192,13 +177,20 @@ export default function GoalsPage() {
             onCollaboratorAdded={fetchGoals}
           />
         )}
+        {selectedGoalForCollaborators && (
+          <CollaboratorsListModal
+            isOpen={isCollaboratorsListModalOpen}
+            onClose={() => setIsCollaboratorsListModalOpen(false)}
+            goalId={selectedGoalForCollaborators}
+          />
+        )}
       </div>
       <Footer />
     </>
   );
 }
 
-function SortableGoalCard({
+function GoalCard({
   goal,
   onEdit,
   onDelete,
@@ -207,6 +199,7 @@ function SortableGoalCard({
   showHistory,
   historyRefreshCounter,
   onManageCollaborators,
+  onViewCollaborators,
 }: {
   goal: Goal;
   onEdit: () => void;
@@ -216,33 +209,17 @@ function SortableGoalCard({
   showHistory: boolean;
   historyRefreshCounter: number;
   onManageCollaborators: () => void;
+  onViewCollaborators: () => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: goal.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   const isCompleted = goal.saved_amount >= goal.goal_amount;
 
   return (
     <div
-      ref={setNodeRef}
-      style={style}
       className={`relative p-6 border-4 border-blue-500 rounded-2xl shadow-lg space-y-3 transition-all duration-300 ${isCompleted
         ? "border-4 border-emerald-500 bg-gradient-to-r from-green-50 to-white dark:from-green-900 dark:to-gray-800"
         : "bg-white dark:bg-gray-800"
         }`}
     >
-      <button
-        {...attributes}
-        {...listeners}
-        className="top-1 left-1 p-2 bg-gray-700 rounded-full cursor-grab "
-      >
-        <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>
-      </button>
-
       {isCompleted && (
         <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-semibold px-3 py-1 rounded-bl-2xl rounded-tr-xl shadow-md">
           🎉 Concluída
@@ -301,6 +278,12 @@ function SortableGoalCard({
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           <UserPlus className="w-4 h-4" /> Colaboradores
+        </button>
+        <button
+          onClick={onViewCollaborators}
+          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+        >
+          <Users className="w-4 h-4" /> Ver Colaboradores
         </button>
       </div>
 
