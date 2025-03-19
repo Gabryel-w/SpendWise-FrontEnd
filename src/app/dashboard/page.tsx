@@ -64,17 +64,16 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchTransactions();
-
-    const ws = new WebSocket(`ws://${process.env.NEXT_PUBLIC_API_URL}`);
+  
+    const ws = new WebSocket(`wss://${process.env.NEXT_PUBLIC_API_URL}`);
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log("WebSocket recebeu:", message);
-
+      
       if (message.type === "update") {
         fetchTransactions();
       }
     };
-
+  
     return () => ws.close();
   }, [fetchTransactions]);
 
