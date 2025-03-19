@@ -121,6 +121,7 @@ export default function Header() {
             <>
               <Link href="/dashboard" className="hover:text-blue-500 transition-colors dark:text-gray-300">Dashboard</Link>
               <Link href="/dashboard/charts" className="hover:text-blue-500 transition-colors dark:text-gray-300">Gráficos</Link>
+              <Link href="/goals" className="hover:text-blue-500 transition-colors dark:text-gray-300">Metas</Link>
               <button
                 onClick={toggleSubmenu}
                 className="flex items-center gap-2 text-sm hover:text-blue-500 transition-colors dark:text-gray-300"
