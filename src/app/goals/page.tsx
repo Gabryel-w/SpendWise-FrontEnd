@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import PopUpConfirmDialog from "@/components/PopUpConfirmDialog";
 import AddCollaboratorModal from "@/components/AddCollaboratorModal";
 import CollaboratorsListModal from "@/components/CollaboratorsListModal";
+import { useRouter } from "next/navigation";
 
 interface Collaborator {
   id: string;
@@ -43,9 +44,18 @@ export default function GoalsPage() {
   const [isCollaboratorsListModalOpen, setIsCollaboratorsListModalOpen] = useState(false);
   const [selectedGoalForCollaborators, setSelectedGoalForCollaborators] = useState<string | null>(null);
 
+  const router = useRouter();
+  
   const fetchGoals = async () => {
     try {
+
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+      
+      if (!user?.id) {
+        router.push("/login");
+        return;
+      }
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals?user_id=${user.id}`);
       const data = await res.json();
 
@@ -220,8 +230,8 @@ function GoalCard({
   return (
     <div
       className={`relative p-6 rounded-2xl shadow-xl space-y-4 transition-all duration-300 ${isCompleted
-          ? "border-2 border-emerald-500 bg-gradient-to-r from-green-50 to-white dark:from-green-900 dark:to-gray-800"
-          : "border-2 border-blue-200 bg-white dark:bg-gray-800"
+        ? "border-2 border-emerald-500 bg-gradient-to-r from-green-50 to-white dark:from-green-900 dark:to-gray-800"
+        : "border-2 border-blue-200 bg-white dark:bg-gray-800"
         }`}
     >
       {isCompleted && (
