@@ -22,7 +22,15 @@ export default function GoalContributionHistory({ goalId, refreshTrigger }: Goal
 
     const fetchContributions = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goal-contributions/by-goal?goal_id=${goalId}`);
+
+            const token = localStorage.getItem("token");
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goal-contributions/by-goal?goal_id=${goalId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                });
+                
             if (!res.ok) {
                 throw new Error("Contributions not found");
             }

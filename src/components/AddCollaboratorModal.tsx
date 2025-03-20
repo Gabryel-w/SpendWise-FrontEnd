@@ -24,12 +24,19 @@ export default function AddCollaboratorModal({
     setError("");
 
     try {
+
+      const token = localStorage.getItem("token");
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/${goalId}/collaborators`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userEmail: email }), 
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+
+          body: JSON.stringify({ userEmail: email }),
         }
       );
 

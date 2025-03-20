@@ -18,12 +18,18 @@ export default function CollaboratorsListModal({ isOpen, onClose, goalId }: Coll
     const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
     const [loading, setLoading] = useState(true);
 
+
+    const token = localStorage.getItem("token");
+
     useEffect(() => {
         if (!isOpen) return;
 
         const fetchCollaborators = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goalId}/collaborators`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goalId}/collaborators`, { 
+                    headers: { Authorization: `Bearer ${token}` 
+                }, });
+                
                 if (!res.ok) {
                     throw new Error("Erro ao buscar colaboradores");
                 }
@@ -64,7 +70,7 @@ export default function CollaboratorsListModal({ isOpen, onClose, goalId }: Coll
                 ) : (
                     <ul className="space-y-4">
                         {collaborators.map((collaborator) => (
-                            <li key={collaborator.id} className="flex items-center bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                            <li key={collaborator.id || Math.random()} className="flex items-center bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
                                 <div className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full">
                                     {collaborator.role === "owner" ? <Shield size={20} /> : <User size={20} />}
                                 </div>
@@ -73,11 +79,10 @@ export default function CollaboratorsListModal({ isOpen, onClose, goalId }: Coll
                                     <p className="text-gray-600 dark:text-gray-400 text-sm">{collaborator.email}</p>
                                 </div>
                                 <span
-                                    className={`ml-auto text-xs font-semibold px-2 py-1 rounded-full ${
-                                        collaborator.role === "owner"
-                                            ? "bg-green-500 text-white"
-                                            : "bg-blue-500 text-white"
-                                    }`}
+                                    className={`ml-auto text-xs font-semibold px-2 py-1 rounded-full ${collaborator.role === "owner"
+                                        ? "bg-green-500 text-white"
+                                        : "bg-blue-500 text-white"
+                                        }`}
                                 >
                                     {collaborator.role === "owner" ? "Dono" : "Colaborador"}
                                 </span>

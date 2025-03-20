@@ -26,9 +26,14 @@ export default function EditGoalModal({ goal, onClose, onGoalUpdated }: EditGoal
         e.preventDefault();
         setLoading(true);
 
+        const token = localStorage.getItem("token");
+
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goal.id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
             body: JSON.stringify({
                 title,
                 goal_amount: parseFloat(goalAmount),

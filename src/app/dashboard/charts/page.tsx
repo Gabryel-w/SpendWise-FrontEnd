@@ -32,13 +32,18 @@ export default function GraphsPage() {
         const fetchTransactions = async () => {
             try {
                 const user = JSON.parse(localStorage.getItem("user") || "{}");
-
+                const token = localStorage.getItem("token");
+                
                 if (!user?.id) {
                     router.push("/login");
                     return;
                 }
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions?user_id=${user.id}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions?user_id=${user.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 const data = await response.json();
                 setTransactions(data);
             } catch (error) {

@@ -12,6 +12,7 @@ import PopUpConfirmDialog from "@/components/PopUpConfirmDialog";
 import AddCollaboratorModal from "@/components/AddCollaboratorModal";
 import CollaboratorsListModal from "@/components/CollaboratorsListModal";
 import { useRouter } from "next/navigation";
+import { headers } from "next/headers";
 
 interface Collaborator {
   id: string;
@@ -46,17 +47,25 @@ export default function GoalsPage() {
 
   const router = useRouter();
   
+  const token = localStorage.getItem("token");
+
   const fetchGoals = async () => {
     try {
 
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       
-      if (!user?.id) {
+
+      if (!user?.id || !token) {
         router.push("/login");
         return;
       }
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals?user_id=${user.id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals?user_id=${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       const data = await res.json();
 
       if (res.status !== 200) {
@@ -66,7 +75,11 @@ export default function GoalsPage() {
       const goalsWithCollaborators = await Promise.all(
         data.map(async (goal: Goal) => {
           try {
-            const collaboratorsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goal.id}/collaborators`);
+            const collaboratorsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${goal.id}/collaborators`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
 
             if (!collaboratorsRes.ok) {
               throw new Error("Collaborators not found");
@@ -90,7 +103,12 @@ export default function GoalsPage() {
   };
 
   const handleDeleteGoal = async (id: string) => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${id}`, { method: "DELETE" });
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     fetchGoals();
   };
 

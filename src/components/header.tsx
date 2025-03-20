@@ -21,9 +21,14 @@ export default function Header() {
   useEffect(() => {
     const fetchUser = async () => {
       const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+      const token = localStorage.getItem("token");
       if (storedUser) {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user-by-email?email=${storedUser.email}`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user-by-email?email=${storedUser.email}`,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           if (!response.ok) throw new Error("Erro ao buscar usuário");
           const userData = await response.json();
           setUser(userData);
@@ -38,6 +43,7 @@ export default function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
     router.push("/login");
   };

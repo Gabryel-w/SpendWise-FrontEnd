@@ -38,7 +38,9 @@ export default function LoginPage() {
       if (!response.ok) throw new Error("Credenciais inválidas. Tente novamente.");
 
       const data = await response.json();
+      
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.session.access_token); 
 
       setSuccessMessage("Login realizado com sucesso! Redirecionando...");
 

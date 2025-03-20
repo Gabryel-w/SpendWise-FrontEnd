@@ -11,28 +11,34 @@ export default function Chatbot() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
-    const [user, setUser] = useState<{ id: string } | null>(null); 
+    const [user, setUser] = useState<{ id: string } | null>(null);
 
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
+       
         if (userData && userData.id) {
-            setUser(userData); 
+            setUser(userData);
         }
-    }, []); 
+    }, []);
 
     const sendMessage = async (message?: string) => {
         const messageToSend = message || input.trim();
-        if (!messageToSend || !user?.id) return; 
+        if (!messageToSend || !user?.id) return;
 
         const newMessages: Message[] = [...messages, { sender: "user", text: messageToSend }];
         setMessages(newMessages);
         setInput("");
 
         try {
+            const token = localStorage.getItem("token");
+            
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: messageToSend, user_id: user.id }) 
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ message: messageToSend, user_id: user.id })
             });
 
             const data = await response.json();
