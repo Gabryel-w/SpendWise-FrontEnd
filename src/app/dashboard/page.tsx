@@ -49,7 +49,7 @@ export default function DashboardPage() {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const token = localStorage.getItem("token");
-      
+
       if (!user?.id) {
         router.push("/login");
         return;
@@ -116,7 +116,9 @@ export default function DashboardPage() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions/${editingTransaction.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+         },
         body: JSON.stringify(editForm),
       });
 
@@ -136,7 +138,7 @@ export default function DashboardPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`, { method: "DELETE" });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
       if (!response.ok) throw new Error("Erro ao deletar transação.");
 
       setTransactions((prev) => prev.filter((t) => t.id !== id));
