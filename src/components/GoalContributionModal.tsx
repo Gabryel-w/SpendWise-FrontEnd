@@ -34,10 +34,14 @@ export default function GoalContributionModal({
 
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const token = localStorage.getItem("token");
+
       const userId = user?.id;
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goal-contributions`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+         },
         body: JSON.stringify({ goal_id: goalId, user_id: userId, amount: parsedAmount }),
       });
 
