@@ -38,11 +38,11 @@ export default function RegisterPage() {
         body: JSON.stringify({ name, email, password }),
       });
 
-      if (!response.ok) throw new Error("Erro ao cadastrar usuário. Tente novamente.");
+      if (!response.ok) throw new Error("Erro ao cadastrar usuário. Utilize um Email válido.");
 
-      setSuccessMessage("Cadastro realizado com sucesso! Redirecionando para o login...");
+      setSuccessMessage("Cadastro realizado com sucesso! Conferir seu email para ativar sua conta.");
 
-      setTimeout(() => router.push("/login"), 1000);
+      setTimeout(() => router.push("/login"), 2000);
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
