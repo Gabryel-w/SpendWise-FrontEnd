@@ -12,7 +12,6 @@ import PopUpConfirmDialog from "@/components/PopUpConfirmDialog";
 import AddCollaboratorModal from "@/components/AddCollaboratorModal";
 import CollaboratorsListModal from "@/components/CollaboratorsListModal";
 import { useRouter } from "next/navigation";
-import { headers } from "next/headers";
 
 interface Collaborator {
   id: string;
@@ -47,14 +46,11 @@ export default function GoalsPage() {
 
   const router = useRouter();
   
-  const token = localStorage.getItem("token");
-
   const fetchGoals = async () => {
     try {
-
+      const token = localStorage.getItem("token");
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       
-
       if (!user?.id || !token) {
         router.push("/login");
         return;
@@ -103,6 +99,7 @@ export default function GoalsPage() {
   };
 
   const handleDeleteGoal = async (id: string) => {
+    const token = localStorage.getItem("token");
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals/${id}`, {
       method: "DELETE",
       headers: {
