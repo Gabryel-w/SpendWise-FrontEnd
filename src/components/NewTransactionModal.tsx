@@ -29,6 +29,7 @@ export default function NewTransactionModal({ onClose, onSuccess }: NewTransacti
         e.preventDefault();
         try {
             const user = JSON.parse(localStorage.getItem("user") || "{}");
+            const token = localStorage.getItem("token");
             if (!user?.id) {
                 alert("Usuário não autenticado.");
                 return;
@@ -42,7 +43,10 @@ export default function NewTransactionModal({ onClose, onSuccess }: NewTransacti
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(transactionData),
             });
 
