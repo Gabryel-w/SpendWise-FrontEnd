@@ -22,16 +22,21 @@ export default function GoalModal({ isOpen, onClose, onGoalCreated }: GoalModalP
     setError(null);
 
     try {
+
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const token = localStorage.getItem("token");
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({
           user_id: user.id,
-          title, 
-          goal_amount: parseFloat(goalAmount), 
-          saved_amount: 0, 
+          title,
+          goal_amount: parseFloat(goalAmount),
+          saved_amount: 0,
           deadline,
         }),
       });
