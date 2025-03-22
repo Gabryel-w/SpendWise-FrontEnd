@@ -71,7 +71,7 @@ Follow the steps below to set up and run the project locally:
 ## 🌍 Live Demo
 
 Check out the live version:  
-🔗 [gabryelwillers.com.br](https://spendwise.app.br/)
+🔗 [SpendWise.app.br](https://spendwise.app.br/)
 
 ---
 
