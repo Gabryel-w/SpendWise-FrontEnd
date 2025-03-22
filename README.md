@@ -1,55 +1,90 @@
-<h1 align="center" id="title">SpendWise Front End</h1>
+# SpendWise Frontend
 
-<p align="center"><img src="https://socialify.git.ci/Gabryel-w/SpendWise-FrontEnd/image?language=1&amp;name=1&amp;owner=1&amp;pattern=Circuit+Board&amp;theme=Dark" alt="project-image"></p>
+<p align="center">
+  <img src="https://socialify.git.ci/Gabryel-w/SpendWise-FrontEnd/image?language=1&amp;name=1&amp;owner=1&amp;pattern=Circuit+Board&amp;theme=Dark" alt="project-image">
+</p>
 
-<p id="description">SpendWise is a personal finance management system that features a chatbot designed to assist users with their financial inquiries. The chatbot retrieves predefined FAQs and user transaction data to recommend relevant queries. Additionally the system includes graphs to help users track their spending and income.</p>
+<p align="center">
+  <strong>Manage your finances intelligently and visually with SpendWise Frontend!</strong>
+</p>
 
-  
-  
-<h2>🧐 Features</h2>
+---
 
-Here're some of the project's best features:
+## 📝 Description
 
-*   User Authentication (via Supabase)
-*   Financial Transaction Management
-*   Chatbot (Predefined FAQs and transaction-based suggestions)
-*   Responsive UI with Tailwind CSS
-*   Dynamic financial charts
+**SpendWise Frontend** is the modern and responsive interface of the personal financial management system **SpendWise**. Developed with cutting-edge technologies, it offers an intuitive experience for users to manage their finances, track expenses and income, and interact with a **finance-specialized chatbot**.
 
-<h2>🛠️ Installation Steps:</h2>
+### Key Features:
+- **User Authentication**: Secure authentication via Supabase.
+- **Financial Transaction Management**: Manage income, expenses, and categorization.
+- **Intelligent Chatbot**: Get FAQs and recommendations based on your transactions.
+- **Dynamic Charts**: Visualize your expenses and income with interactive charts.
+- **Responsive Design**: Enjoy a seamless experience on any device with Tailwind CSS.
 
-<p>1. Clone the repository</p>
+---
 
-```
-Inside a folder open your terminal and do a git clone in the repository.
-```
+## 🚀 Main Features
 
-<p>2. Installing dependencies</p>
+- **Secure Authentication**: Integration with Supabase for user authentication.
+- **Transaction Management**: Adding, editing, and deleting financial transactions.
+- **Financial Chatbot**: Suggestions of FAQs and personalized recommendations based on user transactions.
+- **Dynamic Charts**: Clear and interactive visualization of expenses and income.
+- **Responsive UI**: Modern design adaptable to different devices.
 
-```
-with the cloned project folder open the terminal in it and run the command "npm install" to install the project dependencies
-```
+---
 
-<p>3. Installing the backend</p>
+## 🛠️ Technologies Used
 
-```
-For the application to work the backend must be installed and configured. Follow the steps in the following repository to do so: https://github.com/Gabryel-w/SpendWise-Backend
-```
+- **Next.js**: React framework for building fast and scalable web applications.
+- **TypeScript**: Adds static typing for greater code safety and productivity.
+- **Tailwind CSS**: Utility-first CSS framework for creating modern and responsive interfaces.
+- **Supabase**: Real-time authentication and database.
+- **Lucide-React**: Icon library for a visually appealing interface.
 
-<p>4. running the application</p>
+---
 
-```
-npm run dev
-```
+## 📋 Installation Steps
 
-  
-  
-<h2>💻 Built with</h2>
+Follow the steps below to set up and run the project locally:
 
-Technologies used in the project:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Gabryel-w/SpendWise-FrontEnd.git
+   cd SpendWise-FrontEnd
+   ```
 
-*   Next.js
-*   TypeScript
-*   Tailwind CSS
-*   Supabase (for authentication and database)
-*   Lucide-React (for icons)
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure the backend**:
+   Follow the instructions in the SpendWise Backend repository to set up and run the backend.
+
+4. **Run the project**:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🌍 Live Demo
+
+Check out the live version:  
+🔗 [gabryelwillers.com.br](https://spendwise.app.br/)
+
+---
+
+## 🖼️ Screenshots
+
+![Banner](./assets/Banner.png)
+![Charts](./assets/charts.jpg)
+![Dashboard](./assets/dashboard.jpg)
+
+---
+
+## 👨‍💻 Author
+
+Developed by [Gabryel Willers](https://github.com/Gabryel-w). Let's connect and build something amazing!
+
+<p align="center"> <strong>Transform your financial management with SpendWise Frontend! 💰🚀</strong> </p>

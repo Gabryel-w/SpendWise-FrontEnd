@@ -12,7 +12,7 @@ export default function CacheCleaner() {
     useEffect(() => {
         const clearCache = () => {
             CACHE_KEYS.forEach((key) => localStorage.removeItem(key));
-            console.log("Cache limpo devido à inatividade");
+
             localStorage.removeItem("lastActivity"); // Remove a última atividade ao limpar o cache
             router.push("/login");
         };
